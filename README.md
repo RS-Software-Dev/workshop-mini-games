@@ -1,3 +1,5 @@
+Die Präsentation kannst du [hier](slides/) abrufen.
+
 Workshop für Code Week
 
 Titel: Minimale Spiele mit minimalem Aufwand
