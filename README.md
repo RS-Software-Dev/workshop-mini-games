@@ -1,10 +1,14 @@
 # Retro Games: Ein spielerischer Einstieg in die Webentwicklung
 
-Die Präsentation findest du [hier](slides/).
-
 Alternative Titel:
 - Minimale Spiele mit minimalem Aufwand
 - Webentwicklung mit Spiel und Spaß
+
+
+Hier findest du:
+- [Das Repository](https://github.com/RS-Software-Dev/workshop-mini-games)
+- [Die Übersicht](https://rs-software-dev.github.io/workshop-mini-games)
+- [Die Präsentation](https://rs-software-dev.github.io/workshop-mini-games/slides)
 
 
 ## Tag 1: Game of Life
