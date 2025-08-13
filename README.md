@@ -13,6 +13,8 @@ Hier findest du:
 
 ## Tag 1: Game of Life
 
+[Prototyp](https://rs-software-dev.github.io/workshop-mini-games/01-game-of-life.html)
+
 | Uhrzeit | Thema |
 |-------|-----------|
 | 16:00 | Begrüßung |
