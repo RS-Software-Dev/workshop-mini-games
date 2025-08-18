@@ -43,6 +43,8 @@ Hier findest du:
 
 ## Tag 3: Brick Break
 
+[Prototyp](https://rs-software-dev.github.io/workshop-mini-games/03-brick-break.html)
+
 | Uhrzeit | Thema |
 |-------|-----------|
 | 16:00 | Recap Tag 2 |
