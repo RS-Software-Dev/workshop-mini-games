@@ -1,9 +1,9 @@
 # Retro Games: Ein spielerischer Einstieg in die Webentwicklung
 
-Alternative Titel:
-- Minimale Spiele mit minimalem Aufwand
-- Webentwicklung mit Spiel und Spaß
-
+In diesem Workshop widmen wir uns den Grundlagen der Webentwicklung.
+Wir lernen wie wir Webseiten mit HTML strukurieren, mit CSS gestalten und mit JavaScript zum Leben erwecken.
+Dazu wollen wir gemeinsam ein paar klassische Videospiele nachbauen.
+Der Workshop richtet sich an Einsteiger und setzt keine Programmiererfahrung voraus.
 
 Hier findest du:
 - [Das Repository](https://github.com/RS-Software-Dev/workshop-mini-games)
@@ -27,6 +27,8 @@ Hier findest du:
 | 17:45 | Abschluss |
 
 ## Tag 2: Snake
+
+[Prototyp](https://rs-software-dev.github.io/workshop-mini-games/02-snake.html)
 
 | Uhrzeit | Thema |
 |-------|-----------|
