@@ -19,98 +19,216 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            gap: 24px;
         }
 
 
         canvas {
             border: 2px solid white;
+
+            --color-alive: white;
+            --color-dead: darkgray;
+        }
+
+        .cool-theme {
+            --color-alive: cyan;
+            --color-dead: color-mix(in srgb, cyan 20%, transparent);
         }
     </style>
 
-    <script type="text/javascript">
-
+    <script>
         class GameGrid {
-            #rows
-            #cols
-            #data
+            constructor({ rows, cols, cell }) {
+                this.rows = rows
+                this.cols = cols
+                this.vals = []
 
-            constructor({ rows, cols, make }) {
-                this.#rows = rows
-                this.#cols = cols
-                this.#data = [...Array(cols).keys().map(x => [...Array(rows).keys().map(y => make({ x: x, y: y }))])]
-            }
-
-            get text() {
-                return JSON.stringify(this.#data)
-            }
-
-            isInside({ x, y }) {
-                return (0 <= x && x <= this.#data.length)
-                    && (0 <= y && y <= this.#data[x].length)
-            }
-
-            
-
-            cell({ x, y }) {
-                return {
-                            x: x,
-                            y: y,
-
-                            get isInside() {
-
-                            },
-
-                            get data() {
-
-                            },
-
-                            *neighbors() {
-
-                            }
-
-
-                        }
-                if (0 <= x && x <= this.#data.length) {
-                    if (0 <= y && y <= this.#data[x].length) {
-                        
+                for (let row = 0; row < rows; row++) {
+                    this.vals[row] = [];
+                    for (let col = 0; col < cols; col++) {
+                        // Ask the cellFunction what should be here
+                        this.vals[row][col] = cell(row, col);
                     }
                 }
             }
 
-            *cells() {
-                for (let x = 0; x < this.#data.length; x++) {
-                    for (let y = 0; y < this.#data[x].length; y++) {
-                        yield this.cell({
-                            x: x,
-                            y: y
+            getVal({ row, col }) {
+                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
+                    return this.vals[row][col]
+                }
+
+                return undefined
+            }
+
+            getCell({ row, col }) {
+                return {
+                    row: row,
+                    col: col,
+                    val: this.getVal({
+                        row: row,
+                        col: col
+                    })
+                }
+            }
+
+            setCell({ row, col, val }) {
+                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
+                    this.vals[row][col] = val
+                }
+            }
+        }
+
+        GameGrid.zero = ({ rows, cols }) => new GameGrid({
+            rows: rows,
+            cols: cols,
+            cell: () => 0
+        })
+    </script>
+
+    <script>
+        class ConsoleRenderer {
+            constructor({ alive, dead }) {
+                this.alive = alive
+                this.dead = dead
+            }
+
+            render(grid) {
+                let output = ''
+
+                for (let row = 0; row < grid.rows; row++) {
+                    for (let col = 0; col < grid.cols; col++) {
+                        if (grid.getVal({ row: row, col: col })) {
+                            output = output + this.alive;  // alive
+                        } else {
+                            output = output + this.dead;  // dead
+                        }
+                    }
+                    output = output + '\n';
+                }
+
+                console.log(output)
+            }
+        }
+    </script>
+
+    <script>
+        class CanvasRenderer {
+            constructor({ canvas, tileSize }) {
+                this.canvas = canvas
+                this.tileSize = tileSize
+                this.context = canvas.getContext('2d')
+            }
+
+            centerInCell({ row, col, draw }) {
+                this.context.save()
+                this.context.translate(
+                    row * this.tileSize + this.tileSize / 2,
+                    col * this.tileSize + this.tileSize / 2
+                )
+
+                draw()
+                this.context.restore()
+            }
+
+            fillQuad(size) {
+                this.context.beginPath()
+                this.context.roundRect(-size / 2, -size / 2, size, size, size / 4)
+                this.context.fill()
+                this.context.closePath()
+            }
+
+            fillTile() {
+                this.fillQuad(this.tileSize)
+            }
+
+            render(grid) {
+                this.context.reset()
+                const style = getComputedStyle(this.canvas)
+                const colorAlive = style.getPropertyValue('--color-alive')
+                const colorDead = style.getPropertyValue('--color-dead')
+
+                for (let row = 0; row < grid.rows; row++) {
+                    for (let col = 0; col < grid.cols; col++) {
+                        this.centerInCell({
+                            row: row,
+                            col: col,
+                            draw: () => {
+
+                                if (grid.getVal({ row: row, col: col })) {
+                                    this.context.fillStyle = colorAlive
+                                } else {
+                                    this.context.fillStyle = colorDead
+                                }
+
+                                this.fillQuad(this.tileSize - 2)
+                            }
                         })
                     }
                 }
             }
+        }
 
-            *neighbors({ x, y }) {
-                for (let dx = -1; dx <= +1; dx++) {
-                    for (let dy = -1; dy <= +1; dy++) {
-                        if (dx != 0 && dy != 0) {
-                            yield this.cell({
-                                x: x + dx,
-                                y: y + dy
-                            })
+        CanvasRenderer.auto = ({ rows, cols, tileSize }) => {
+            const canvas = document.createElement('canvas')
+            canvas.width = rows * tileSize
+            canvas.height = cols * tileSize
+
+            return new CanvasRenderer({
+                canvas: canvas,
+                tileSize: tileSize
+            })
+        }
+    </script>
+
+    <script>
+        function updateGameOfLife(grid) {
+            return new GameGrid({
+                rows: grid.rows,
+                cols: grid.cols,
+                cell: (row, col) => {
+                    // Count alive neighbors
+                    let aliveNeighbors = 0;
+                    for (let dr = -1; dr <= 1; dr++) {
+                        for (let dc = -1; dc <= 1; dc++) {
+                            if (dr === 0 && dc === 0) continue; // Skip self
+                            const val = grid.getVal({ row: row + dr, col: col + dc });
+                            if (val) aliveNeighbors++;
                         }
                     }
-                }
-            }
 
-            countNeighbors(pos) {
-                var count = 0
+                    const isAlive = grid.getVal({ row, col });
 
-                for (const cell of neighbors(pos)) {
-                    if (cell) {
-                        count += 1
+                    // Game of Life rules
+                    if (isAlive) {
+                        return aliveNeighbors === 2 || aliveNeighbors === 3;
+                    } else {
+                        return aliveNeighbors === 3;
                     }
                 }
+            })
+        }
+    </script>
 
-                return count
+    <script>
+        class GameLoop {
+            constructor({ launch, render, update }) {
+                this.launch = launch
+                this.render = render
+                this.update = update
+            }
+
+            run() {
+                let state = this.launch()
+                this.render(state)
+
+                let next = () => {
+                    console.log("Next Frame")
+                    state = this.update(state)
+                    this.render(state)
+                }
+
+                console.log("Start run")
+                setInterval(next, 1000)
             }
         }
     </script>
@@ -122,90 +240,71 @@
     </header>
 
     <main>
-        <canvas id="view" width="320" height="320"></canvas>
-        <canvas width="320" height="640">
-        </canvas>
+        <canvas id="view" width="480" height="480"></canvas>
     </main>
     <script>
-        let canvas = document.getElementById('view')
-        let context = canvas.getContext('2d')
 
-        const TILE_SIZE = 16;
+        const deadGrid = GameGrid.zero({
+            rows: 5,
+            cols: 5
+        })
 
-        class GameData {
+        const randomGrid = new GameGrid({
+            rows: 5,
+            cols: 5,
+            cell: () => Math.random() <= 0.5
+        })
 
-        }
+        const asciiRenderer = new ConsoleRenderer({
+            alive: '1',
+            dead: '0'
+        })
 
-        class GameView {
-            constructor({ canvas }) {
-                this.canvas = canvas
-                this.context = canvas.getContext('2d')
-            }
+        const emojiRenderer = new ConsoleRenderer({
+            alive: '😀',
+            dead: '😴'
+        })
 
-            static get currentParent() {
-                return new GameView({
-                    canvas: document.currentScript.parentNode
-                })
-            }
+        console.log("=== Dead Grid with Ascii ===")
+        asciiRenderer.render(deadGrid)
 
-            get width() {
-                return this.canvas.width
-            }
-        }
+        console.log("=== Random Grid with Ascii ===")
+        asciiRenderer.render(randomGrid)
+
+        console.log("=== Random Grid with Emoji===")
+        emojiRenderer.render(randomGrid)
 
 
+        const canvasRenderer = new CanvasRenderer({
+            canvas: document.getElementById('view'),
+            tileSize: 16
+        })
 
-        function clearCanvas() {
-            context.clearRect(0, 0, canvas.width, canvas.height)
-        }
+        canvasRenderer.render(randomGrid)
 
-        function fillTile({ x, y }) {
-            context.beginPath()
-            context.roundRect(x * TILE_SIZE + 1, y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2, TILE_SIZE / 8)
-            context.fill()
-        }
+        const autoRenderer = CanvasRenderer.auto({
+            rows: 24,
+            cols: 32,
+            tileSize: 16
+        })
 
-        function drawLivingCell(pos) {
-            context.fillStyle = "cyan"
-            fillTile(pos)
-        }
+        document.querySelector('main').append(
+            autoRenderer.canvas
+        )
 
-        function drawDeadCell(pos) {
-            context.fillStyle = "darkgray"
-            fillTile(pos)
-        }
+        autoRenderer.canvas.classList.add('cool-theme')
 
-        /*
-        function render() {
-            clearCanvas()
-            for (let cell of grid.cells()) {
-                if (cell.val == true) {
-                    drawLivingCell(cell)
-                }
-                else {
-                    drawDeadCell(cell)
-                }
-            }
-        }
+        const loop = new GameLoop({
+            launch: () => new GameGrid({
+                rows: 24,
+                cols: 32,
+                cell: () => Math.random() <= 0.5
+            }),
+            render: (state) => autoRenderer.render(state),
+            update: updateGameOfLife
+        })
 
-        window.onload = render
-        */
-    </script>
-
-    <script defer>
-        function *generator() {
-            console.dir(Array( 10).keys())
-            for(let i in Array(10).fill(0)) {
-                console.log('iterare')
-                yield i
-            }
-        }
-
-        for(const gen of generator()) {
-            console.log('gen', gen)
-        }
-
-        
+        loop.run()
     </script>
 </body>
 
