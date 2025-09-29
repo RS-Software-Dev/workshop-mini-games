@@ -52,29 +52,12 @@
                 }
             }
 
-            getVal({ row, col }) {
+            getCell({ row, col }) {
                 if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
                     return this.vals[row][col]
                 }
 
                 return undefined
-            }
-
-            getCell({ row, col }) {
-                return {
-                    row: row,
-                    col: col,
-                    val: this.getVal({
-                        row: row,
-                        col: col
-                    })
-                }
-            }
-
-            setCell({ row, col, val }) {
-                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
-                    this.vals[row][col] = val
-                }
             }
         }
 
@@ -97,7 +80,7 @@
 
                 for (let row = 0; row < grid.rows; row++) {
                     for (let col = 0; col < grid.cols; col++) {
-                        if (grid.getVal({ row: row, col: col })) {
+                        if (grid.getCell({ row: row, col: col })) {
                             output = output + this.alive;  // alive
                         } else {
                             output = output + this.dead;  // dead
@@ -154,7 +137,7 @@
                             col: col,
                             draw: () => {
 
-                                if (grid.getVal({ row: row, col: col })) {
+                                if (grid.getCell({ row: row, col: col })) {
                                     this.context.fillStyle = colorAlive
                                 } else {
                                     this.context.fillStyle = colorDead
@@ -191,12 +174,12 @@
                     for (let dr = -1; dr <= 1; dr++) {
                         for (let dc = -1; dc <= 1; dc++) {
                             if (dr === 0 && dc === 0) continue; // Skip self
-                            const val = grid.getVal({ row: row + dr, col: col + dc });
+                            const val = grid.getCell({ row: row + dr, col: col + dc });
                             if (val) aliveNeighbors++;
                         }
                     }
 
-                    const isAlive = grid.getVal({ row, col });
+                    const isAlive = grid.getCell({ row, col });
 
                     // Game of Life rules
                     if (isAlive) {
@@ -325,7 +308,7 @@
 
                 for (let row = 0; row < grid.rows; row++) {
                     for (let col = 0; col < grid.cols; col++) {
-                        if (grid.getVal({ row: row, col: col })) {
+                        if (grid.getCell({ row: row, col: col })) {
                             alive += 1
                         }
                     }
