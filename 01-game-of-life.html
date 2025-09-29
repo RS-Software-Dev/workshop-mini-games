@@ -232,6 +232,27 @@
             }
         }
     </script>
+    <script>
+        class HtmlRenderer {
+            constructor({ parent, template }) {
+                this.parent = parent
+                this.template = template
+            }
+
+            render(state) {
+                this.parent.innerHTML = this.template(state)
+            }
+        }
+
+        HtmlRenderer.append = ({ parent, template }) => {
+            let div = document.createElement('div')
+            parent.append(div)
+            return new HtmlRenderer({
+                parent: div,
+                template: template
+            })
+        }
+    </script>
 </head>
 
 <body>
@@ -240,7 +261,7 @@
     </header>
 
     <main>
-        <canvas id="view" width="480" height="480"></canvas>
+        <canvas id="view" width="120" height="120"></canvas>
     </main>
     <script>
 
@@ -288,11 +309,44 @@
             tileSize: 16
         })
 
-        document.querySelector('main').append(
+
+        const main = document.querySelector('main')
+        main.append(
             autoRenderer.canvas
         )
 
         autoRenderer.canvas.classList.add('cool-theme')
+
+
+        statsRenderer = HtmlRenderer.append({
+            parent: main,
+            template: (grid) => {
+                let alive = 0
+
+                for (let row = 0; row < grid.rows; row++) {
+                    for (let col = 0; col < grid.cols; col++) {
+                        if (grid.getVal({ row: row, col: col })) {
+                            alive += 1
+                        }
+                    }
+                }
+
+                return `\
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Cells Alive:</th>
+                            <td>${alive}</td>
+                        </tr>
+                        <tr>
+                            <th>Chances of Survival:</th>
+                            <td>${Math.round(alive / (grid.rows * grid.cols) * 100)}%</td>
+                        </tr>
+                    </tbody>
+                </table>
+                `
+            }
+        })
 
         const loop = new GameLoop({
             launch: () => new GameGrid({
@@ -300,7 +354,11 @@
                 cols: 32,
                 cell: () => Math.random() <= 0.5
             }),
-            render: (state) => autoRenderer.render(state),
+            render: (state) => {
+                asciiRenderer.render(state)
+                autoRenderer.render(state)
+                statsRenderer.render(state)
+            },
             update: updateGameOfLife
         })
 
