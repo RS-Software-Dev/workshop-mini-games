@@ -352,20 +352,11 @@
             //score
             context.font = "20px sans-serif";
             context.fillText(score, 10, 25);
-
-
-
-
         }
-
 
         function outOfBounds(xPosition) {
             return (xPosition < 0 || xPosition + playerWidth > boardWidth);
         }
-
-
-
-
 
         function movePlayer(e) {
             if (gameOver) {
@@ -476,7 +467,7 @@
     <div id="title">
         <h1>Brick Break</h1>
     </div>
-    <canvas id="board"></canvas>
+    <!--<canvas id="board"></canvas>
     <div id="buttons">
         <button id="left"><i class="ri-arrow-left-line"></i></button>
         <button id="right"><i class="ri-arrow-right-line"></i></button>
@@ -484,13 +475,31 @@
     </div>
     <div id="restart">
         <button id="space"><i class="ri-reset-left-fill"></i></button>
-    </div>
+    </div>-->
 
 
 
+    <canvas id="game"></canvas>
 
+    <script type="text/javascript">
+        let canvas = document.getElementById('game');
+        let ctx = canvas.getContext('2d')
 
+        function draw(timestamp) {
+            console.log('draw', timestamp)
+        }
 
+        function loop(timestamp) {
+            draw(timestamp)
+            window.requestAnimationFrame(loop)
+        }
+
+        function init() {
+            window.requestAnimationFrame(loop)
+        }
+
+        window.onload = init
+    </script>
 
 </body>
 

@@ -5,142 +5,208 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game of Life</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
     <style>
-        .game-form {
+        body {
+            background-color: black;
+            color: white;
+            font-family: monospace;
+        }
+
+        main,
+        header {
             display: flex;
             flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
-        .game-row {
-            display: flex;
-            flex-direction: row;
-        }
 
-        .game-cell {
-            margin: 1px;
-            height: 48px;
-            width: 48px;
-            background-color: darkgray;
-            box-sizing: border-box;
-        }
-
-        .game-cell:hover {
-            border: 4px solid green;
-        }
-
-        .alive {
-            background-color: black;
-        }
-        .dead {
-            background-color: gray;
+        canvas {
+            border: 2px solid white;
         }
     </style>
-</head>
 
-<body x-data="new GameData">
-    <h1>Game of Life</h1>
-    <section>
-        <h2>Spiel erstellen</h2>
-        <form action="" @submit.prevent="generateGrid(width, height)"
-            class="game-form">
-            <label for="game-width">Breite</label>
-            <input type="number" name="game-width" id="game-width" x-model="width">
+    <script type="text/javascript">
 
-            <label for="game-height">Höhe</label>
-            <input type="number" name="game-height" id="game-height" x-model="height">
+        class GameGrid {
+            #rows
+            #cols
+            #data
 
-            <button type="submit">
-                Erstellen
-            </button>
-        </form>
-    </section>
-
-    <section>
-        <h2>Spielen</h2>
-        <p>Current Turn: <span x-text="turn"></span></p>
-        <template x-for="(row, y) in grid">
-            <div class="game-row">
-                <template x-for="(life, x) in row">
-                    <div class="game-cell" :class="life ? 'alive' : 'dead'" @click="toggle(x, y)">
-                    </div>
-                </template>
-            </div>
-        </template>
-        <button type="button" @click="update()">
-            Update
-        </button>
-    </section>
-
-    <script>
-        class GameData {
-            grid = [[]]
-            width = 10
-            height = 10
-            turn = 0
-
-            static createGrid(w, h, f) {
-                return Array.from({length: h}, (_, y) => Array.from({length: w}, (_, x) => f(x, y)))
+            constructor({ rows, cols, make }) {
+                this.#rows = rows
+                this.#cols = cols
+                this.#data = [...Array(cols).keys().map(x => [...Array(rows).keys().map(y => make({ x: x, y: y }))])]
             }
 
-            generateGrid(w, h) {
-                this.width = w
-                this.height = h
-                this.turn = 0
-                this.grid = GameData.createGrid(w, h, (x, y) => Math.random() > 0.5)
-                console.log("Generate", this.width, this.height)
+            get text() {
+                return JSON.stringify(this.#data)
             }
 
-            isAlive(x, y) {
-                if(x < 0 || x >= this.width) {
-                    return false
+            isInside({ x, y }) {
+                return (0 <= x && x <= this.#data.length)
+                    && (0 <= y && y <= this.#data[x].length)
+            }
+
+            
+
+            cell({ x, y }) {
+                return {
+                            x: x,
+                            y: y,
+
+                            get isInside() {
+
+                            },
+
+                            get data() {
+
+                            },
+
+                            *neighbors() {
+
+                            }
+
+
+                        }
+                if (0 <= x && x <= this.#data.length) {
+                    if (0 <= y && y <= this.#data[x].length) {
+                        
+                    }
                 }
-
-                if(y < 0 || y >= this.height) {
-                    return false
-                }
-
-                return this.grid[y][x]
             }
 
-            neighbors(x, y) {
-                let count = 0
-                for(let dy = -1; dy <= 1; dy++) {
-                    for(let dx = -1; dx <= 1; dx++) {
-                        if(dx != 0 && dy != 0 && this.isAlive(x + dx, y + dy)) {
-                            count += 1
+            *cells() {
+                for (let x = 0; x < this.#data.length; x++) {
+                    for (let y = 0; y < this.#data[x].length; y++) {
+                        yield this.cell({
+                            x: x,
+                            y: y
+                        })
+                    }
+                }
+            }
+
+            *neighbors({ x, y }) {
+                for (let dx = -1; dx <= +1; dx++) {
+                    for (let dy = -1; dy <= +1; dy++) {
+                        if (dx != 0 && dy != 0) {
+                            yield this.cell({
+                                x: x + dx,
+                                y: y + dy
+                            })
                         }
                     }
                 }
+            }
+
+            countNeighbors(pos) {
+                var count = 0
+
+                for (const cell of neighbors(pos)) {
+                    if (cell) {
+                        count += 1
+                    }
+                }
+
                 return count
-            }
-
-            toggle(x, y) {
-                this.grid[y][x] = !this.grid[y][x]
-            }
-
-            update() {
-                this.turn += 1
-                console.log("Update", this.width, this.height)
-                console.log(this.grid)
-                this.grid = GameData.createGrid(this.width, this.height, (x, y) => {
-                    console.log("Update", x, y)
-                    let alive = this.grid[y][x]
-                    let neighbors = this.neighbors(x, y)
-                    console.log(alive, neighbors)
-
-                    if(alive && (neighbors == 2 || neighbors == 3)) {
-                        return true
-                    }
-                    else if (!alive && neighbors == 3) {
-                        return true
-                    }
-                    else {
-                        return false
-                    }
-                })
             }
         }
     </script>
+</head>
+
+<body>
+    <header>
+        <h1>Game of Life</h1>
+    </header>
+
+    <main>
+        <canvas id="view" width="320" height="320"></canvas>
+        <canvas width="320" height="640">
+        </canvas>
+    </main>
+    <script>
+        let canvas = document.getElementById('view')
+        let context = canvas.getContext('2d')
+
+        const TILE_SIZE = 16;
+
+        class GameData {
+
+        }
+
+        class GameView {
+            constructor({ canvas }) {
+                this.canvas = canvas
+                this.context = canvas.getContext('2d')
+            }
+
+            static get currentParent() {
+                return new GameView({
+                    canvas: document.currentScript.parentNode
+                })
+            }
+
+            get width() {
+                return this.canvas.width
+            }
+        }
+
+
+
+        function clearCanvas() {
+            context.clearRect(0, 0, canvas.width, canvas.height)
+        }
+
+        function fillTile({ x, y }) {
+            context.beginPath()
+            context.roundRect(x * TILE_SIZE + 1, y * TILE_SIZE + 1, TILE_SIZE - 2, TILE_SIZE - 2, TILE_SIZE / 8)
+            context.fill()
+        }
+
+        function drawLivingCell(pos) {
+            context.fillStyle = "cyan"
+            fillTile(pos)
+        }
+
+        function drawDeadCell(pos) {
+            context.fillStyle = "darkgray"
+            fillTile(pos)
+        }
+
+        /*
+        function render() {
+            clearCanvas()
+            for (let cell of grid.cells()) {
+                if (cell.val == true) {
+                    drawLivingCell(cell)
+                }
+                else {
+                    drawDeadCell(cell)
+                }
+            }
+        }
+
+        window.onload = render
+        */
+    </script>
+
+    <script defer>
+        function *generator() {
+            console.dir(Array( 10).keys())
+            for(let i in Array(10).fill(0)) {
+                console.log('iterare')
+                yield i
+            }
+        }
+
+        for(const gen of generator()) {
+            console.log('gen', gen)
+        }
+
+        
+    </script>
 </body>
+
 </html>
