@@ -4,503 +4,527 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Brick Break</title>
-    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
-    <link rel="shortcut icon" href="icon/icon.png" type="image/x-icon">
+    <title>Brick Break Game</title>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600&display=swap');
-
-        * {
-            font-family: "Poppins", sans-serif;
-        }
-
-
         body {
-            text-align: center;
-            background-color: #222;
-
-        }
-
-        #board {
             background-color: black;
-            border-top: 5px solid skyblue;
-            border-left: 5px solid skyblue;
-            border-right: 5px solid skyblue;
-            width: 35vw;
-            height: 35vw;
+            color: white;
+            font-family: monospace;
         }
 
-        #buttons {
-
-            margin-top: 1vw;
-
-            display: none;
+        main,
+        header {
+            display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 8vw;
-
-
+            gap: 24px;
         }
 
-        #buttons button {
-            border: 1px solid white;
-            background-color: transparent;
+        canvas {
+            border: 2px solid white;
+        }
+
+        button {
+            background-color: #333;
             color: white;
-
-
-
+            border: 2px solid white;
+            padding: 12px 24px;
+            font-family: monospace;
+            font-size: 16px;
+            cursor: pointer;
         }
 
-        #buttons button:active {
-            color: black;
-            background-color: white;
+        button:hover {
+            background-color: #555;
         }
 
-        #space {
-            display: none;
-            border: 1px solid white;
-            background-color: transparent;
-            color: white;
-
-
+        .game-over {
+            color: red;
+            font-size: 24px;
+            font-weight: bold;
         }
 
-        #space:active {
-            color: black;
-            background-color: white;
-
-        }
-
-
-        #restart {
-
-            display: none;
-            align-items: center;
-            justify-content: center;
-            margin-top: 1vw;
-        }
-
-        #title {
-
-            color: white;
-        }
-
-        @media (max-width:768px) {
-            #buttons {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 35vw;
-
-            }
-
-            #left {
-                width: 19vw;
-                font-size: 9vw;
-            }
-
-            #right {
-                width: 19vw;
-                font-size: 9vw;
-            }
-
-            #restart {
-                display: flex;
-
-                align-items: center;
-                justify-content: center;
-
-
-            }
-
-            #space {
-                width: 19vw;
-                font-size: 9vw;
-
-            }
-
-            #board {
-                width: 85vw;
-                height: 105vw;
-            }
+        .win {
+            color: lime;
+            font-size: 24px;
+            font-weight: bold;
         }
     </style>
 
-    <script type="text/javascript">
-        let leftPressed = false;
-        let rightPressed = false;
+    <script>
+        class GameGrid {
+            constructor({ rows, cols, cell }) {
+                this.rows = rows
+                this.cols = cols
+                this.vals = []
 
-        //board
-        let board;
-        let boardWidth = 500;
-        let boardHeight = 500;
-        let context;
-
-        //player
-        let playerWidth = 80;
-        let playerHeight = 10;
-        let playerVelocityX = 10;
-
-
-        let player = {
-            x: boardWidth / 2 - playerWidth / 2,
-            y: boardHeight - playerHeight - 5,
-            width: playerWidth,
-            height: playerHeight,
-            VelocityX: playerVelocityX
-
-        }
-
-        //ball
-        let ballWidth = 10;
-        let ballHeight = 10;
-        let ballVelocityX = 1.5;
-        let ballVelocityY = 1;
-        let ball = {
-            x: boardWidth / 2,
-            y: boardHeight / 4,
-            width: ballWidth,
-            height: ballHeight,
-            velocityX: ballVelocityX,
-            velocityY: ballVelocityY
-        }
-
-
-        //blocks
-        let blockArray = [];
-        let blockWidth = 50;
-        let blockHeight = 10;
-        let blockColumns = 8;
-        let blockRows = 3; //add more as games goes on
-        let blockMaxRows = 10; //limit how many rows 
-        let blockCount = 0;
-
-        //starting block corner top left
-        let blockX = 15;
-        let blockY = 45;
-
-
-        //score
-        let score = 0;
-        let gameOver = false;
-
-
-        window.onload = function () {
-            board = document.getElementById("board");
-            board.height = boardHeight;
-            board.width = boardWidth;
-            context = board.getContext("2d"); //used for drawing on the board
-
-            //draw intial player
-            context.fillStyle = "lightgreen";
-            context.fillRect(player.x, player.y, player.width, player.height);
-
-
-
-            requestAnimationFrame(update);
-            document.addEventListener("keydown", movePlayer);
-
-
-
-            // Button event listeners for mouse and touch
-            document.getElementById("left").addEventListener("mousedown", () => {
-                leftPressed = true;
-            });
-            document.getElementById("left").addEventListener("mouseup", () => {
-                leftPressed = false;
-            });
-            document.getElementById("left").addEventListener("mouseleave", () => {
-                leftPressed = false;
-            });
-            document.getElementById("left").addEventListener("touchstart", () => {
-                leftPressed = true;
-            });
-            document.getElementById("left").addEventListener("touchend", () => {
-                leftPressed = false;
-            });
-
-            document.getElementById("right").addEventListener("mousedown", () => {
-                rightPressed = true;
-            });
-            document.getElementById("right").addEventListener("mouseup", () => {
-                rightPressed = false;
-            });
-            document.getElementById("right").addEventListener("mouseleave", () => {
-                rightPressed = false;
-            });
-            document.getElementById("right").addEventListener("touchstart", () => {
-                rightPressed = true;
-            });
-            document.getElementById("right").addEventListener("touchend", () => {
-                rightPressed = false;
-            });
-
-            document.getElementById("space").addEventListener("click", () => {
-                if (gameOver) {
-                    resetGame();
-                }
-            });
-
-
-            //create blocks
-            createBlocks();
-        }
-
-
-        function update() {
-            requestAnimationFrame(update);
-            if (gameOver) {
-                document.getElementById("space").style.display = "block";
-                return;
-            } else {
-                document.getElementById("space").style.display = "none"; // Hide the button when the game is active
-            }
-
-
-            context.clearRect(0, 0, board.width, board.height);
-
-
-
-            //
-
-
-            // Player movement based on button states
-            if (leftPressed) {
-                let nextPlayerX = player.x - player.VelocityX;
-                if (!outOfBounds(nextPlayerX)) {
-                    player.x = nextPlayerX;
-                }
-            }
-            if (rightPressed) {
-                let nextPlayerX = player.x + player.VelocityX;
-                if (!outOfBounds(nextPlayerX)) {
-                    player.x = nextPlayerX;
-                }
-            }
-
-
-
-            //
-
-            //player
-            context.fillStyle = "lightgreen";
-            context.fillRect(player.x, player.y, player.width, player.height);
-
-            context.fillStyle = "white";
-            ball.x += ball.velocityX;
-            ball.y += ball.velocityY;
-            context.fillRect(ball.x, ball.y, ball.width, ball.height);
-
-
-            //bounce ball off walls
-            if (ball.y <= 0) {
-                //if the ball touches top of canvas
-                ball.velocityY *= -1;
-            } else if (ball.x <= 0 || (ball.x + ball.width) >= boardWidth) {
-                //if ball touches left or right of canvas
-                ball.velocityX *= -1;
-            } else if (ball.y + ball.height >= boardHeight) {
-                //game over
-                // if ball touches bottom of canvas   
-                context.font = "20px sans-serif";
-                context.fillText("Game Over: Press 'Space' to Restart", 80, 400);
-
-                gameOver = true;
-
-            }
-
-
-            //bounce the ball off player paddle
-            if (topCollision(ball, player) || bottomCollision(ball, player)) {
-                ball.velocityY *= -1; //flip y direction up or down
-            }
-            else if (leftCollision(ball, player) || rightCollision(ball, player)) {
-                ball.velocityX *= -1; //flip x direction up or down
-            }
-
-            //blocks
-            context.fillStyle = " skyblue";
-            for (let i = 0; i < blockArray.length; i++) {
-                let block = blockArray[i];
-                if (!block.break) {
-                    if (topCollision(ball, block) || bottomCollision(ball, block)) {
-                        block.break = true;
-                        ball.velocityY *= -1; //flip y direction up or down
-                        blockCount -= 1;
-                        score += 100;
+                for (let row = 0; row < rows; row++) {
+                    this.vals[row] = [];
+                    for (let col = 0; col < cols; col++) {
+                        this.vals[row][col] = cell(row, col);
                     }
-                    else if (leftCollision(ball, block) || rightCollision(ball, block)) {
-                        block.break = true;
-                        ball.velocityX *= -1; //flip x direction left or right
-                        blockCount -= 1;
-                        score += 100;
+                }
+            }
 
+            getCell({ row, col }) {
+                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
+                    return this.vals[row][col]
+                }
+                return undefined
+            }
+
+            setCell({ row, col, value }) {
+                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
+                    this.vals[row][col] = value
+                }
+            }
+        }
+    </script>
+
+    <script>
+        class BrickBreakState {
+            constructor({ rows, cols, tileSize }) {
+                this.rows = rows
+                this.cols = cols
+                this.tileSize = tileSize
+                this.width = cols * tileSize
+                this.height = rows * tileSize
+                
+                this.paddle = {
+                    x: this.width / 2,
+                    y: this.height - 30,
+                    width: 80,
+                    height: 15,
+                    speed: 6
+                }
+                
+                this.ball = {
+                    x: this.width / 2,
+                    y: this.height - 50,
+                    radius: 8,
+                    dx: 4,
+                    dy: -4
+                }
+                
+                this.bricks = this.createBricks()
+                this.gameOver = false
+                this.won = false
+                this.score = 0
+                this.paddleMove = 0
+            }
+
+            createBricks() {
+                const bricks = []
+                const brickRows = 5
+                const brickCols = this.cols
+                const colors = ['red', 'orange', 'yellow', 'green', 'blue']
+                
+                for (let row = 2; row < 2 + brickRows; row++) {
+                    for (let col = 0; col < brickCols; col++) {
+                        bricks.push({
+                            row,
+                            col,
+                            color: colors[row - 2],
+                            alive: true
+                        })
                     }
-                    context.fillRect(block.x, block.y, block.width, block.height);
                 }
+                return bricks
             }
 
-            //next level
-            if (blockCount == 0) {
-                score += 100 * blockRows * blockColumns; //bonus points :)
-                blockRows = Math.min(blockRows + 1, blockMaxRows);
-                createBlocks();
-            }
+            getBrickGrid() {
+                const grid = new GameGrid({
+                    rows: this.rows,
+                    cols: this.cols,
+                    cell: () => ({ type: 'empty' })
+                })
 
-
-
-            //score
-            context.font = "20px sans-serif";
-            context.fillText(score, 10, 25);
-        }
-
-        function outOfBounds(xPosition) {
-            return (xPosition < 0 || xPosition + playerWidth > boardWidth);
-        }
-
-        function movePlayer(e) {
-            if (gameOver) {
-                if (e.code == "Space") {
-                    resetGame();
-                }
-            }
-            if (e.code == "ArrowLeft") {
-                // player.x -= playerVelocityX;
-                let nextPlayerX = player.x - player.VelocityX;
-                if (!outOfBounds(nextPlayerX)) {
-                    player.x = nextPlayerX;
-                }
-            }
-            else if (e.code == "ArrowRight") {
-                // player.x += player.VelocityX;
-                let nextPlayerX = player.x + player.VelocityX;
-                if (!outOfBounds(nextPlayerX)) {
-                    player.x = nextPlayerX;
-                }
-
-
-
-            }
-        }
-
-
-
-        function detectCollision(a, b) {
-            return a.x < b.x + b.width && //a's top left corner doesn't reach b's top right corner
-                a.x + a.width > b.x && // a's top right corner passes b's top left corner 
-                a.y < b.y + b.height &&  //a's top left corner does'nt reach b's top left corner
-                a.y + a.height > b.y; //a's bottom left corner passes b's top left corner
-        }
-
-        function topCollision(ball, block) { //a is above b ( ball is above the block)
-            return detectCollision(ball, block) && (ball.y + ball.height) >= block.y;
-
-        }
-
-        function bottomCollision(ball, block) { //a is below b( ball is below block)
-            return detectCollision(ball, block) && (block.y + block.height) >= ball.y;
-
-        }
-
-        function leftCollision(ball, block) { //a is left of b ( ball is left of block)
-            return detectCollision(ball, block) && (ball.x + ball.width) >= block.x;
-
-        }
-
-        function rightCollision(ball, block) { // a is right of b ( ball is right of block)
-            return detectCollision(ball, block) && (block.x + block.width) >= ball.x;
-
-        }
-
-
-        function createBlocks() {
-            blockArray = []; //create blockArray
-            for (let c = 0; c < blockColumns; c++) {
-                for (let r = 0; r < blockRows; r++) {
-                    let block = {
-                        x: blockX + c * blockWidth + c * 10, //c*10 space 10 pixels apart columns 
-                        y: blockY + r * blockHeight + r * 10,//r*10 space 10 pixels apart rows
-                        width: blockWidth,
-                        height: blockHeight,
-                        break: false
-
+                this.bricks.forEach(brick => {
+                    if (brick.alive) {
+                        grid.setCell({ 
+                            row: brick.row, 
+                            col: brick.col, 
+                            value: { type: 'brick', color: brick.color }
+                        })
                     }
-                    blockArray.push(block);
+                })
 
+                return grid
+            }
+        }
+    </script>
+
+    <script>
+        function updateBrickBreak(state) {
+            if (state.gameOver || state.won) return state
+
+            const newState = new BrickBreakState({ 
+                rows: state.rows, 
+                cols: state.cols,
+                tileSize: state.tileSize 
+            })
+            newState.paddle = { ...state.paddle }
+            newState.ball = { ...state.ball }
+            newState.bricks = state.bricks.map(b => ({ ...b }))
+            newState.score = state.score
+            newState.paddleMove = state.paddleMove
+
+            // Move paddle
+            if (newState.paddleMove !== 0) {
+                newState.paddle.x += newState.paddleMove * newState.paddle.speed
+                
+                // Keep paddle in bounds
+                if (newState.paddle.x < newState.paddle.width / 2) {
+                    newState.paddle.x = newState.paddle.width / 2
+                }
+                if (newState.paddle.x > newState.width - newState.paddle.width / 2) {
+                    newState.paddle.x = newState.width - newState.paddle.width / 2
                 }
             }
-            blockCount = blockArray.length;
+
+            // Move ball
+            newState.ball.x += newState.ball.dx
+            newState.ball.y += newState.ball.dy
+
+            // Ball collision with walls
+            if (newState.ball.x - newState.ball.radius <= 0 || 
+                newState.ball.x + newState.ball.radius >= newState.width) {
+                newState.ball.dx = -newState.ball.dx
+                newState.ball.x = Math.max(newState.ball.radius, 
+                    Math.min(newState.width - newState.ball.radius, newState.ball.x))
+            }
+
+            if (newState.ball.y - newState.ball.radius <= 0) {
+                newState.ball.dy = -newState.ball.dy
+                newState.ball.y = newState.ball.radius
+            }
+
+            // Ball collision with paddle
+            if (newState.ball.y + newState.ball.radius >= newState.paddle.y - newState.paddle.height / 2 &&
+                newState.ball.y - newState.ball.radius <= newState.paddle.y + newState.paddle.height / 2 &&
+                newState.ball.x >= newState.paddle.x - newState.paddle.width / 2 &&
+                newState.ball.x <= newState.paddle.x + newState.paddle.width / 2) {
+                
+                newState.ball.dy = -Math.abs(newState.ball.dy)
+                newState.ball.y = newState.paddle.y - newState.paddle.height / 2 - newState.ball.radius
+                
+                // Add angle based on where ball hits paddle
+                const hitPos = (newState.ball.x - newState.paddle.x) / (newState.paddle.width / 2)
+                newState.ball.dx = hitPos * 4
+            }
+
+            // Ball falls below paddle
+            if (newState.ball.y > newState.height) {
+                newState.gameOver = true
+                return newState
+            }
+
+            // Ball collision with bricks
+            for (let brick of newState.bricks) {
+                if (!brick.alive) continue
+
+                const brickX = brick.col * newState.tileSize + newState.tileSize / 2
+                const brickY = brick.row * newState.tileSize + newState.tileSize / 2
+                const brickWidth = newState.tileSize - 2
+                const brickHeight = newState.tileSize - 2
+
+                // Check if ball intersects with brick
+                if (newState.ball.x + newState.ball.radius >= brickX - brickWidth / 2 &&
+                    newState.ball.x - newState.ball.radius <= brickX + brickWidth / 2 &&
+                    newState.ball.y + newState.ball.radius >= brickY - brickHeight / 2 &&
+                    newState.ball.y - newState.ball.radius <= brickY + brickHeight / 2) {
+                    
+                    brick.alive = false
+                    newState.score += 10
+
+                    // Determine bounce direction based on which side was hit
+                    const ballCenterX = newState.ball.x - brickX
+                    const ballCenterY = newState.ball.y - brickY
+                    
+                    if (Math.abs(ballCenterX) > Math.abs(ballCenterY)) {
+                        newState.ball.dx = -newState.ball.dx
+                    } else {
+                        newState.ball.dy = -newState.ball.dy
+                    }
+                    break
+                }
+            }
+
+            // Check win condition
+            if (newState.bricks.every(b => !b.alive)) {
+                newState.won = true
+            }
+
+            return newState
+        }
+    </script>
+
+    <script>
+        class CanvasRenderer {
+            constructor({ canvas, tileSize, cellRenderer }) {
+                this.canvas = canvas
+                this.tileSize = tileSize
+                this.context = canvas.getContext('2d')
+                this.cellRenderer = cellRenderer
+            }
+
+            centerInCell({ row, col, draw }) {
+                this.context.save()
+                this.context.translate(
+                    col * this.tileSize + this.tileSize / 2,
+                    row * this.tileSize + this.tileSize / 2
+                )
+                draw()
+                this.context.restore()
+            }
+
+            fillQuad(size) {
+                this.context.beginPath()
+                this.context.roundRect(-size / 2, -size / 2, size, size, size / 4)
+                this.context.fill()
+                this.context.closePath()
+            }
+
+            renderGrid(grid) {
+                for (let row = 0; row < grid.rows; row++) {
+                    for (let col = 0; col < grid.cols; col++) {
+                        const cell = grid.getCell({ row, col })
+                        
+                        this.centerInCell({
+                            row, col,
+                            draw: () => {
+                                this.cellRenderer.render(cell, this.context, {
+                                    fillQuad: (size) => this.fillQuad(size),
+                                    tileSize: this.tileSize
+                                })
+                            }
+                        })
+                    }
+                }
+            }
+
+            render(state) {
+                this.context.reset()
+                this.context.fillStyle = '#111'
+                this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
+
+                // Render bricks using grid
+                this.renderGrid(state.getBrickGrid())
+
+                // Render paddle (smooth position)
+                this.context.fillStyle = 'white'
+                this.context.fillRect(
+                    state.paddle.x - state.paddle.width / 2,
+                    state.paddle.y - state.paddle.height / 2,
+                    state.paddle.width,
+                    state.paddle.height
+                )
+
+                // Render ball (smooth position)
+                this.context.fillStyle = 'cyan'
+                this.context.beginPath()
+                this.context.arc(state.ball.x, state.ball.y, state.ball.radius, 0, Math.PI * 2)
+                this.context.fill()
+                this.context.closePath()
+            }
         }
 
+        CanvasRenderer.auto = ({ rows, cols, tileSize, cellRenderer }) => {
+            const canvas = document.createElement('canvas')
+            canvas.width = cols * tileSize
+            canvas.height = rows * tileSize
+            return new CanvasRenderer({ canvas, tileSize, cellRenderer })
+        }
 
-        function resetGame() {
-            gameOver = false;
-            document.getElementById("space").style.display = "none";
-            player = {
-                x: boardWidth / 2 - playerWidth / 2,
-                y: boardHeight - playerHeight - 5,
-                width: playerWidth,
-                height: playerHeight,
-                VelocityX: playerVelocityX
+        CanvasRenderer.appendAuto = ({parent, rows, cols, tileSize, cellRenderer}) => {
+            let renderer = CanvasRenderer.auto({
+                rows,
+                cols,
+                tileSize,
+                cellRenderer
+            })
 
+            parent.append(renderer.canvas)
+            return renderer
+        }
+    </script>
+
+    <script>
+        class BrickBreakCellRenderer {
+            render(cell, context, helpers) {
+                if (cell.type === 'empty') return
+
+                if (cell.type === 'brick') {
+                    context.fillStyle = cell.color
+                    helpers.fillQuad(helpers.tileSize - 2)
+                }
+            }
+        }
+    </script>
+
+    <script>
+        class GameLoop {
+            constructor({ launch, render, update, tickRate }) {
+                this.launch = launch
+                this.render = render
+                this.update = update
+                this.tickRate = tickRate || 1000
+                this.intervalId = null
+                this.state = null
             }
 
-            ball = {
-                x: boardWidth / 2,
-                y: boardHeight / 4,
-                width: ballWidth,
-                height: ballHeight,
-                velocityX: ballVelocityX,
-                velocityY: ballVelocityY
+            run() {
+                this.state = this.launch()
+                this.render(this.state)
+
+                let next = () => {
+                    this.state = this.update(this.state)
+                    this.render(this.state)
+                    
+                    if ((this.state.gameOver || this.state.won) && this.intervalId) {
+                        clearInterval(this.intervalId)
+                        this.intervalId = null
+                    }
+                }
+
+                this.intervalId = setInterval(next, this.tickRate)
             }
 
-            blockArray = [];
-            blockRows = 3;
-            score = 0;
-            createBlocks();
+            stop() {
+                if (this.intervalId) {
+                    clearInterval(this.intervalId)
+                    this.intervalId = null
+                }
+            }
 
+            restart() {
+                this.stop()
+                this.run()
+            }
+        }
+    </script>
+
+    <script>
+        class HtmlRenderer {
+            constructor({ container, template }) {
+                this.container = container
+                this.template = template
+            }
+
+            render(state) {
+                this.container.innerHTML = this.template(state)
+            }
+        }
+
+        HtmlRenderer.append = ({ parent, template }) => {
+            let div = document.createElement('div')
+            parent.append(div)
+            return new HtmlRenderer({ container: div, template })
         }
     </script>
 </head>
 
 <body>
-    <div id="title">
-        <h1>Brick Break</h1>
-    </div>
-    <!--<canvas id="board"></canvas>
-    <div id="buttons">
-        <button id="left"><i class="ri-arrow-left-line"></i></button>
-        <button id="right"><i class="ri-arrow-right-line"></i></button>
+    <header>
+        <h1>Brick Break Game</h1>
+        <p>Use Arrow Keys or A/D to move paddle</p>
+    </header>
 
-    </div>
-    <div id="restart">
-        <button id="space"><i class="ri-reset-left-fill"></i></button>
-    </div>-->
+    <main>
+    </main>
 
+    <script>
+        const ROWS = 25
+        const COLS = 30
+        const TILE_SIZE = 20
 
+        const main = document.querySelector('main')
 
-    <canvas id="game"></canvas>
+        const canvasRenderer = CanvasRenderer.appendAuto({
+            parent: main,
+            rows: ROWS,
+            cols: COLS,
+            tileSize: TILE_SIZE,
+            cellRenderer: new BrickBreakCellRenderer
+        })
 
-    <script type="text/javascript">
-        let canvas = document.getElementById('game');
-        let ctx = canvas.getContext('2d')
+        const statsRenderer = HtmlRenderer.append({
+            parent: main,
+            template: (state) => {
+                const aliveBricks = state.bricks.filter(b => b.alive).length
+                return `
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Score:</th>
+                            <td>${state.score}</td>
+                        </tr>
+                        <tr>
+                            <th>Bricks Left:</th>
+                            <td>${aliveBricks}</td>
+                        </tr>
+                        ${state.gameOver ? '<tr><td colspan="2" class="game-over">GAME OVER!</td></tr>' : ''}
+                        ${state.won ? '<tr><td colspan="2" class="win">YOU WIN!</td></tr>' : ''}
+                    </tbody>
+                </table>
+                ${(state.gameOver || state.won) ? '<button id="restart-btn">Restart Game</button>' : ''}
+                `
+            }
+        })
 
-        function draw(timestamp) {
-            console.log('draw', timestamp)
+        const loop = new GameLoop({
+            launch: () => new BrickBreakState({ 
+                rows: ROWS, 
+                cols: COLS,
+                tileSize: TILE_SIZE 
+            }),
+            render: (state) => {
+                canvasRenderer.render(state)
+                statsRenderer.render(state)
+
+                if (state.gameOver || state.won) {
+                    const btn = document.getElementById('restart-btn')
+                    if (btn) {
+                        btn.onclick = () => loop.restart()
+                    }
+                }
+            },
+            update: updateBrickBreak,
+            tickRate: 16 // ~60 FPS for smooth movement
+        })
+
+        // Input handling
+        const keys = {}
+        
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true
+            updatePaddleMove()
+        })
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false
+            updatePaddleMove()
+        })
+
+        function updatePaddleMove() {
+            if (!loop.state) return
+
+            const leftPressed = keys['arrowleft'] || keys['a']
+            const rightPressed = keys['arrowright'] || keys['d']
+
+            if (leftPressed && !rightPressed) {
+                loop.state.paddleMove = -1
+            } else if (rightPressed && !leftPressed) {
+                loop.state.paddleMove = 1
+            } else {
+                loop.state.paddleMove = 0
+            }
         }
 
-        function loop(timestamp) {
-            draw(timestamp)
-            window.requestAnimationFrame(loop)
-        }
-
-        function init() {
-            window.requestAnimationFrame(loop)
-        }
-
-        window.onload = init
+        loop.run()
     </script>
-
 </body>
 
 </html>

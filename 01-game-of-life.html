@@ -31,8 +31,8 @@
         }
 
         .cool-theme {
-            --color-alive: cyan;
-            --color-dead: color-mix(in srgb, cyan 20%, transparent);
+            --color-alive: lime;
+            --color-dead: color-mix(in srgb, var(--color-alive) 20%, transparent);
         }
     </style>
 
@@ -47,7 +47,7 @@
                     this.vals[row] = [];
                     for (let col = 0; col < cols; col++) {
                         // Ask the cellFunction what should be here
-                        this.vals[row][col] = cell(row, col);
+                        this.vals[row][col] = cell({ row, col });
                     }
                 }
             }
@@ -59,13 +59,32 @@
 
                 return undefined
             }
-        }
 
-        GameGrid.zero = ({ rows, cols }) => new GameGrid({
-            rows: rows,
-            cols: cols,
-            cell: () => 0
-        })
+            *cells() {
+                for (let row = 0; row < this.rows; row++) {
+                    for (let col = 0; col < this.cols; col++) {
+                        yield {
+                            row,
+                            col,
+                            val: this.getCell({ row, col })
+                        }
+                    }
+                }
+            }
+
+            *neighbors({ row, col }) {
+                for (let dr = -1; dr <= 1; dr++) {
+                    for (let dc = -1; dc <= 1; dc++) {
+                        if (dr === 0 && dc === 0) continue; // Skip self
+                        yield {
+                            row: row + dr,
+                            col: col + dc,
+                            val: this.getCell({ row: row + dr, col: col + dc })
+                        }
+                    }
+                }
+            }
+        }
     </script>
 
     <script>
@@ -120,33 +139,27 @@
                 this.context.closePath()
             }
 
-            fillTile() {
-                this.fillQuad(this.tileSize)
-            }
-
             render(grid) {
                 this.context.reset()
                 const style = getComputedStyle(this.canvas)
                 const colorAlive = style.getPropertyValue('--color-alive')
                 const colorDead = style.getPropertyValue('--color-dead')
 
-                for (let row = 0; row < grid.rows; row++) {
-                    for (let col = 0; col < grid.cols; col++) {
-                        this.centerInCell({
-                            row: row,
-                            col: col,
-                            draw: () => {
+                for (const { row, col, val } of grid.cells()) {
+                    this.centerInCell({
+                        row,
+                        col,
+                        draw: () => {
 
-                                if (grid.getCell({ row: row, col: col })) {
-                                    this.context.fillStyle = colorAlive
-                                } else {
-                                    this.context.fillStyle = colorDead
-                                }
-
-                                this.fillQuad(this.tileSize - 2)
+                            if (val) {
+                                this.context.fillStyle = colorAlive
+                            } else {
+                                this.context.fillStyle = colorDead
                             }
-                        })
-                    }
+
+                            this.fillQuad(this.tileSize - 2)
+                        }
+                    })
                 }
             }
         }
@@ -161,6 +174,12 @@
                 tileSize: tileSize
             })
         }
+
+        CanvasRenderer.autoAppend = ({ parent, rows, cols, tileSize }) => {
+            const renderer = CanvasRenderer.auto({ rows, cols, tileSize })
+            parent.append(renderer.canvas)
+            return renderer
+        }
     </script>
 
     <script>
@@ -168,15 +187,11 @@
             return new GameGrid({
                 rows: grid.rows,
                 cols: grid.cols,
-                cell: (row, col) => {
+                cell: ({ row, col }) => {
                     // Count alive neighbors
                     let aliveNeighbors = 0;
-                    for (let dr = -1; dr <= 1; dr++) {
-                        for (let dc = -1; dc <= 1; dc++) {
-                            if (dr === 0 && dc === 0) continue; // Skip self
-                            const val = grid.getCell({ row: row + dr, col: col + dc });
-                            if (val) aliveNeighbors++;
-                        }
+                    for (const { val } of grid.neighbors({ row, col })) {
+                        if (val) aliveNeighbors++;
                     }
 
                     const isAlive = grid.getCell({ row, col });
@@ -242,79 +257,36 @@
     <header>
         <h1>Game of Life</h1>
     </header>
-
     <main>
-        <canvas id="view" width="120" height="120"></canvas>
     </main>
+    <aside>
+    </aside>
     <script>
 
-        const deadGrid = GameGrid.zero({
-            rows: 5,
-            cols: 5
-        })
-
-        const randomGrid = new GameGrid({
-            rows: 5,
-            cols: 5,
-            cell: () => Math.random() <= 0.5
-        })
-
-        const asciiRenderer = new ConsoleRenderer({
-            alive: '1',
-            dead: '0'
-        })
-
-        const emojiRenderer = new ConsoleRenderer({
-            alive: '😀',
-            dead: '😴'
-        })
-
-        console.log("=== Dead Grid with Ascii ===")
-        asciiRenderer.render(deadGrid)
-
-        console.log("=== Random Grid with Ascii ===")
-        asciiRenderer.render(randomGrid)
-
-        console.log("=== Random Grid with Emoji===")
-        emojiRenderer.render(randomGrid)
 
 
-        const canvasRenderer = new CanvasRenderer({
-            canvas: document.getElementById('view'),
-            tileSize: 16
-        })
+        function GameOfLife({ parent, rows, cols, tileSize }) {
+            const canvasRenderer = CanvasRenderer.autoAppend({
+                parent: parent,
+                rows: rows,
+                cols: cols,
+                tileSize: tileSize
+            })
 
-        canvasRenderer.render(randomGrid)
-
-        const autoRenderer = CanvasRenderer.auto({
-            rows: 24,
-            cols: 32,
-            tileSize: 16
-        })
+            canvasRenderer.canvas.classList.add('cool-theme')
 
 
-        const main = document.querySelector('main')
-        main.append(
-            autoRenderer.canvas
-        )
-
-        autoRenderer.canvas.classList.add('cool-theme')
-
-
-        statsRenderer = HtmlRenderer.append({
-            parent: main,
-            template: (grid) => {
-                let alive = 0
-
-                for (let row = 0; row < grid.rows; row++) {
-                    for (let col = 0; col < grid.cols; col++) {
-                        if (grid.getCell({ row: row, col: col })) {
+            statsRenderer = HtmlRenderer.append({
+                parent: parent,
+                template: (grid) => {
+                    let alive = 0
+                    for (const { val } of grid.cells()) {
+                        if (val) {
                             alive += 1
                         }
                     }
-                }
 
-                return `\
+                    return `\
                 <table>
                     <tbody>
                         <tr>
@@ -328,24 +300,33 @@
                     </tbody>
                 </table>
                 `
-            }
+                }
+            })
+
+            return new GameLoop({
+                launch: () => new GameGrid({
+                    rows: rows,
+                    cols: cols,
+                    cell: () => Math.random() <= 0.5
+                }),
+                render: (state) => {
+                    //asciiRenderer.render(state)
+                    canvasRenderer.render(state)
+                    statsRenderer.render(state)
+                },
+                update: updateGameOfLife
+            })
+        }
+
+
+        const game = GameOfLife({
+            parent: document.querySelector('main'),
+            rows: 30,
+            cols: 40,
+            tileSize: 16
         })
 
-        const loop = new GameLoop({
-            launch: () => new GameGrid({
-                rows: 24,
-                cols: 32,
-                cell: () => Math.random() <= 0.5
-            }),
-            render: (state) => {
-                asciiRenderer.render(state)
-                autoRenderer.render(state)
-                statsRenderer.render(state)
-            },
-            update: updateGameOfLife
-        })
-
-        loop.run()
+        game.run()
     </script>
 </body>
 

@@ -4,198 +4,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Snake</title>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <title>Snake Game</title>
+
     <style>
-        .game-view {
-            background-color: lightgray;
+        body {
+            background-color: black;
+            color: white;
+            font-family: monospace;
         }
 
-        #myCanvas {
-            background-color: lightgray;
+        main,
+        header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+        }
+
+        canvas {
+            border: 2px solid white;
+            --color-snake: lime;
+            --color-food: red;
+            --color-empty: #111;
+        }
+
+        .cool-theme {
+            --color-snake: cyan;
+            --color-food: magenta;
+            --color-empty: #0a0a1a;
+        }
+
+        button {
+            background-color: #333;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 24px;
+            font-family: monospace;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .game-over {
+            color: red;
+            font-size: 24px;
+            font-weight: bold;
         }
     </style>
+
+    <script>
+        class GameGrid {
+            constructor({ rows, cols, cell }) {
+                this.rows = rows
+                this.cols = cols
+                this.vals = []
+
+                for (let row = 0; row < rows; row++) {
+                    this.vals[row] = [];
+                    for (let col = 0; col < cols; col++) {
+                        this.vals[row][col] = cell(row, col);
+                    }
+                }
+            }
+
+            getCell({ row, col }) {
+                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
+                    return this.vals[row][col]
+                }
+                return undefined
+            }
+
+            setCell({ row, col, value }) {
+                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
+                    this.vals[row][col] = value
+                }
+            }
+        }
+    </script>
+
+    <script>
+        class SnakeState {
+            constructor({ rows, cols }) {
+                this.rows = rows
+                this.cols = cols
+                this.snake = [
+                    { row: Math.floor(rows / 2), col: Math.floor(cols / 2) }
+                ]
+                this.direction = { row: 0, col: 1 } // Start moving right
+                this.nextDirection = { row: 0, col: 1 }
+                this.food = this.spawnFood()
+                this.gameOver = false
+                this.score = 0
+            }
+
+            spawnFood() {
+                let food;
+                do {
+                    food = {
+                        row: Math.floor(Math.random() * this.rows),
+                        col: Math.floor(Math.random() * this.cols)
+                    }
+                } while (this.isSnakeAt(food.row, food.col))
+                return food
+            }
+
+            isSnakeAt(row, col) {
+                return this.snake.some(seg => seg.row === row && seg.col === col)
+            }
+
+            toGrid() {
+                const grid = new GameGrid({
+                    rows: this.rows,
+                    cols: this.cols,
+                    cell: () => 'empty'
+                })
+
+                // Place food
+                grid.setCell({ row: this.food.row, col: this.food.col, value: 'food' })
+
+                // Place snake
+                this.snake.forEach(seg => {
+                    grid.setCell({ row: seg.row, col: seg.col, value: 'snake' })
+                })
+
+                return grid
+            }
+        }
+    </script>
+
+    <script>
+        function updateSnake(state) {
+            if (state.gameOver) return state
+
+            const newState = new SnakeState({ rows: state.rows, cols: state.cols })
+            newState.snake = [...state.snake]
+            newState.direction = state.nextDirection
+            newState.nextDirection = state.nextDirection
+            newState.food = state.food
+            newState.score = state.score
+
+            // Calculate new head position
+            const head = newState.snake[0]
+            const newHead = {
+                row: head.row + newState.direction.row,
+                col: head.col + newState.direction.col
+            }
+
+            // Wrap around edges
+            if (newHead.row < 0) newHead.row = newState.rows - 1
+            if (newHead.row >= newState.rows) newHead.row = 0
+            if (newHead.col < 0) newHead.col = newState.cols - 1
+            if (newHead.col >= newState.cols) newHead.col = 0
+
+            // Check self collision
+            if (newState.isSnakeAt(newHead.row, newHead.col)) {
+                newState.gameOver = true
+                return newState
+            }
+
+            // Add new head
+            newState.snake.unshift(newHead)
+
+            // Check food collision
+            if (newHead.row === newState.food.row && newHead.col === newState.food.col) {
+                newState.food = newState.spawnFood()
+                newState.score++
+            } else {
+                // Remove tail if no food eaten
+                newState.snake.pop()
+            }
+
+            return newState
+        }
+    </script>
+
+    <script>
+        class CanvasRenderer {
+            constructor({ canvas, tileSize, cellRenderer }) {
+                this.canvas = canvas
+                this.tileSize = tileSize
+                this.context = canvas.getContext('2d')
+                this.cellRenderer = cellRenderer
+            }
+
+            centerInCell({ row, col, draw }) {
+                this.context.save()
+                this.context.translate(
+                    col * this.tileSize + this.tileSize / 2,
+                    row * this.tileSize + this.tileSize / 2
+                )
+                draw()
+                this.context.restore()
+            }
+
+            fillQuad(size) {
+                this.context.beginPath()
+                this.context.roundRect(-size / 2, -size / 2, size, size, size / 4)
+                this.context.fill()
+                this.context.closePath()
+            }
+
+            render(grid) {
+                this.context.reset()
+                
+                // Let cell renderer set up (e.g., fill background)
+                if (this.cellRenderer.setup) {
+                    this.cellRenderer.setup(this.context, this.canvas)
+                }
+
+                for (let row = 0; row < grid.rows; row++) {
+                    for (let col = 0; col < grid.cols; col++) {
+                        const cell = grid.getCell({ row, col })
+                        
+                        this.centerInCell({
+                            row, col,
+                            draw: () => {
+                                this.cellRenderer.render(cell, this.context, {
+                                    fillQuad: (size) => this.fillQuad(size),
+                                    tileSize: this.tileSize
+                                })
+                            }
+                        })
+                    }
+                }
+            }
+        }
+
+        CanvasRenderer.auto = ({ rows, cols, tileSize, cellRenderer }) => {
+            const canvas = document.createElement('canvas')
+            canvas.width = cols * tileSize
+            canvas.height = rows * tileSize
+            return new CanvasRenderer({ canvas, tileSize, cellRenderer })
+        }
+
+        CanvasRenderer.appendAuto = ({parent, rows, cols, tileSize, cellRenderer}) => {
+            let renderer = CanvasRenderer.auto({
+                rows,
+                cols,
+                tileSize,
+                cellRenderer
+            })
+
+            parent.append(renderer.canvas)
+            return renderer
+        }
+    </script>
+
+    <script>
+        class SnakeCellRenderer {
+            /*constructor({ canvas }) {
+                this.canvas = canvas
+            }
+
+            setup(context, canvas) {
+                const style = getComputedStyle(canvas)
+                this.colorSnake = style.getPropertyValue('--color-snake')
+                this.colorFood = style.getPropertyValue('--color-food')
+            }*/
+
+            render(cell, context, helpers) {
+                if (cell === 'empty') return
+
+                if (cell === 'snake') {
+                    context.fillStyle = 'lime'
+                } else if (cell === 'food') {
+                    context.fillStyle = 'red'
+                }
+                
+                helpers.fillQuad(helpers.tileSize - 2)
+            }
+        }
+    </script>
+
+    <script>
+        class GameLoop {
+            constructor({ launch, render, update, tickRate }) {
+                this.launch = launch
+                this.render = render
+                this.update = update
+                this.tickRate = tickRate || 1000
+                this.intervalId = null
+                this.state = null
+            }
+
+            run() {
+                this.state = this.launch()
+                this.render(this.state)
+
+                let next = () => {
+                    this.state = this.update(this.state)
+                    this.render(this.state)
+                    
+                    if (this.state.gameOver && this.intervalId) {
+                        clearInterval(this.intervalId)
+                        this.intervalId = null
+                    }
+                }
+
+                this.intervalId = setInterval(next, this.tickRate)
+            }
+
+            stop() {
+                if (this.intervalId) {
+                    clearInterval(this.intervalId)
+                    this.intervalId = null
+                }
+            }
+
+            restart() {
+                this.stop()
+                this.run()
+            }
+        }
+    </script>
+
+    <script>
+        class HtmlRenderer {
+            constructor({ container, template }) {
+                this.container = container
+                this.template = template
+            }
+
+            render(state) {
+                this.container.innerHTML = this.template(state)
+            }
+        }
+
+        HtmlRenderer.append = ({ parent, template }) => {
+            let div = document.createElement('div')
+            parent.append(div)
+            return new HtmlRenderer({ container: div, template })
+        }
+    </script>
 </head>
 
 <body>
-    <section>
-        <h2>With Canvas</h2>
-        <canvas id="myCanvas"></canvas>
+    <header>
+        <h1>Snake Game</h1>
+        <p>Use Arrow Keys or WASD to move</p>
+    </header>
 
-        <script type="text/javascript">
-            // Within the script-tag you have to write Javascript
+    <main>
+    </main>
 
+    <script>
+        const ROWS = 20
+        const COLS = 30
+        const TILE_SIZE = 20
 
-            /*******************************************************
-              * GAME LOGIC VARIABLES
-              *******************************************************/
+        const main = document.querySelector('main')
 
-            const Direction = {
-                UP: 1,
-                RIGHT: 2,
-                DOWN: 3,
-                LEFT: 4
-            };
+        const canvasRenderer = CanvasRenderer.appendAuto({
+            parent: main,
+            rows: 20,
+            cols: 30,
+            tileSize: 20,
+            cellRenderer: new SnakeCellRenderer
+        })
 
-            var tileSize = 15;
-            var nrOfTilesInX = 50;
-            var nrOfTilesInY = 30;
-
-            var snakeColor = "red";
-            var snakeX = 2;
-            var snakeY = 2;
-            var snakeDirection = Direction.RIGHT;
-
-            var foodColor = "green";
-            var foodX = getRandomNumber(0, nrOfTilesInX - 1);
-            var foodY = getRandomNumber(0, nrOfTilesInY - 1);
-
-            var score = 0;
-
-
-            /*******************************************************
-            * CANVAS VARIABLES
-            *******************************************************/
-
-            var canvas = document.getElementById("myCanvas");
-            var ctx = canvas.getContext("2d");
-
-            ctx.canvas.width = nrOfTilesInX * tileSize;
-            ctx.canvas.height = nrOfTilesInY * tileSize;
-
-
-            /*******************************************************
-            * GAME LOOP
-            *******************************************************/
-
-            function gameLoop() {
-                clearCanvas();
-
-                moveSnake();
-
-                checkFoodCollision();
-                checkWallCollision();
-
-                // draw snake
-                fillTile(snakeX, snakeY, snakeColor);
-
-                // draw food
-                fillTile(foodX, foodY, foodColor);
-
-                drawText("Score: " + score, "20px Arial", "black", 10, canvas.height - 10);
+        const statsRenderer = HtmlRenderer.append({
+            parent: main,
+            template: (state) => {
+                return `
+                <table>
+                    <tbody>
+                        <tr>
+                            <th>Score:</th>
+                            <td>${state.score}</td>
+                        </tr>
+                        <tr>
+                            <th>Snake Length:</th>
+                            <td>${state.snake.length}</td>
+                        </tr>
+                        ${state.gameOver ? '<tr><td colspan="2" class="game-over">GAME OVER!</td></tr>' : ''}
+                    </tbody>
+                </table>
+                ${state.gameOver ? '<button id="restart-btn">Restart Game</button>' : ''}
+                `
             }
+        })
 
-            var gameLoopInterval = setInterval(gameLoop, 100);
+        const loop = new GameLoop({
+            launch: () => new SnakeState({ rows: ROWS, cols: COLS }),
+            render: (state) => {
+                canvasRenderer.render(state.toGrid())
+                statsRenderer.render(state)
 
-
-            /*******************************************************
-            * GAME LOGIC FUNCTIONS
-            *******************************************************/
-
-            function moveSnake() {
-                if (snakeDirection == Direction.UP) {
-                    snakeY = snakeY - 1;
-                } else if (snakeDirection == Direction.RIGHT) {
-                    snakeX = snakeX + 1;
-                } else if (snakeDirection == Direction.DOWN) {
-                    snakeY = snakeY + 1;
-                } else if (snakeDirection == Direction.LEFT) {
-                    snakeX = snakeX - 1;
+                // Attach restart handler if game over
+                if (state.gameOver) {
+                    const btn = document.getElementById('restart-btn')
+                    if (btn) {
+                        btn.onclick = () => loop.restart()
+                    }
                 }
+            },
+            update: updateSnake,
+            tickRate: 150
+        })
+
+        // Input handling
+        document.addEventListener('keydown', (e) => {
+            if (!loop.state || loop.state.gameOver) return
+
+            const key = e.key.toLowerCase()
+            const dir = loop.state.direction
+
+            // Prevent reversing direction
+            if ((key === 'arrowup' || key === 'w') && dir.row !== 1) {
+                loop.state.nextDirection = { row: -1, col: 0 }
+            } else if ((key === 'arrowdown' || key === 's') && dir.row !== -1) {
+                loop.state.nextDirection = { row: 1, col: 0 }
+            } else if ((key === 'arrowleft' || key === 'a') && dir.col !== 1) {
+                loop.state.nextDirection = { row: 0, col: -1 }
+            } else if ((key === 'arrowright' || key === 'd') && dir.col !== -1) {
+                loop.state.nextDirection = { row: 0, col: 1 }
             }
+        })
 
-            function checkFoodCollision() {
-                if (snakeX == foodX && snakeY == foodY) {
-                    score = score + 1;
-                    generateNewFood();
-                }
-            }
-
-            function generateNewFood() {
-                foodX = getRandomNumber(0, nrOfTilesInX - 1);
-                foodY = getRandomNumber(0, nrOfTilesInY - 1);
-            }
-
-            function gameOver() {
-                drawText(
-                    "Game over!",
-                    "60px Arial black",
-                    "black",
-                    canvas.width / 2 - 200,
-                    canvas.height / 2
-                );
-                clearInterval(gameLoopInterval);
-            }
-
-            function checkWallCollision() {
-                // in X direction
-                if (snakeX < 0 || snakeX > nrOfTilesInX) {
-                    gameOver();
-                }
-
-                // in Y direction
-                if (snakeY < 0 || snakeY > nrOfTilesInY) {
-                    gameOver();
-                }
-            }
-
-
-            /*******************************************************
-            * DRAWING FUNCTIONS
-            *******************************************************/
-
-            function fillTile(x, y, color) {
-                ctx.beginPath();
-                ctx.rect(x * tileSize, y * tileSize, tileSize, tileSize);
-                ctx.fillStyle = color;
-                ctx.fill();
-                ctx.closePath();
-            }
-
-            function clearCanvas() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-
-            function drawText(text, font, color, x, y) {
-                ctx.beginPath();
-                ctx.font = font;
-                ctx.fillStyle = color;
-                ctx.fillText(text, x, y);
-                ctx.closePath();
-            }
-
-
-            /*******************************************************
-              * USER INTERACTION FUNCTIONS
-              *******************************************************/
-
-            function keyPressed(event) {
-                if (event.key == "ArrowUp") {
-                    snakeDirection = Direction.UP;
-                } else if (event.key == "ArrowRight") {
-                    snakeDirection = Direction.RIGHT;
-                } else if (event.key == "ArrowDown") {
-                    snakeDirection = Direction.DOWN;
-                } else if (event.key == "ArrowLeft") {
-                    snakeDirection = Direction.LEFT;
-                }
-            }
-
-            document.addEventListener("keydown", keyPressed);
-
-
-            /*******************************************************
-            * HELPER FUNCTIONS
-            *******************************************************/
-
-            function getRandomNumber(start, end) {
-                return Math.ceil(Math.random() * (end - start) + start);
-            }
-
-        </script>
-    </section>
-
-  
+        loop.run()
+    </script>
 </body>
 
 </html>
