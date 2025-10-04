@@ -70,20 +70,20 @@
                         }
                     }
 
-                    return `\
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>Cells Alive:</th>
-                            <td>${alive}</td>
-                        </tr>
-                        <tr>
-                            <th>Chances of Survival:</th>
-                            <td>${Math.round(alive / (grid.rows * grid.cols) * 100)}%</td>
-                        </tr>
-                    </tbody>
-                </table>
-                `
+                    return `
+                    <table>
+                        <tbody>
+                            <tr>
+                                <th>Cells Alive:</th>
+                                <td>${alive}</td>
+                            </tr>
+                            <tr>
+                                <th>Chances of Survival:</th>
+                                <td>${Math.round(alive / (grid.rows * grid.cols) * 100)}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    `
                 }
             })
 
