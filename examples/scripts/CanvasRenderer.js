@@ -1,10 +1,8 @@
 class CanvasRenderer {
-    constructor({ canvas, tileSize, draw }) {
+    constructor({ canvas, draw }) {
         this.canvas = canvas
-        this.tileSize = tileSize
         this.context = canvas.getContext('2d')
         this.draw = draw.bind(this.context)
-
 
         this.context.fillRoundRect = function(x, y, w, h, r) {
             this.beginPath()
@@ -20,20 +18,19 @@ class CanvasRenderer {
     }
 }
 
-CanvasRenderer.auto = ({ rows, cols, tileSize, draw }) => {
+CanvasRenderer.create = ({ width, height, draw }) => {
     const canvas = document.createElement('canvas')
-    canvas.width = cols * tileSize
-    canvas.height = rows * tileSize
+    canvas.width = width
+    canvas.height = height
 
     return new CanvasRenderer({
         canvas,
-        tileSize,
         draw
     })
 }
 
-CanvasRenderer.autoAppend = ({ parent, rows, cols, tileSize, draw }) => {
-    const renderer = CanvasRenderer.auto({ rows, cols, tileSize, draw })
+CanvasRenderer.createInside = ({ parent, width, height, draw }) => {
+    const renderer = CanvasRenderer.create({ width, height, draw })
     parent.append(renderer.canvas)
     return renderer
 }

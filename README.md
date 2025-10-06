@@ -21,16 +21,16 @@ Hier findest du:
 
 | Uhrzeit | Thema |
 |-------|-----------|
-| 15:30 | Recap Tag 1 |
-| 15:45 | ??? |
-| 16:00 | Begrüßung |
-| 16:15 | Intro |
-| 16:30 | HTML Gründgerüst |
-| 16:45 | Spielfeld zeichnen |
-| 17:00 | Regeln implementieren |
-| 17:15 | Click Handler |
-| 17:30 | Automatische Updates |
-| 17:45 | Abschluss |
+| 15:30 | Begrüßung |
+| 15:45 | Inhalt des Workshops |
+| 16:00 | Game of Life  |
+| 16:15 | HTML Grundgerüst |
+| 16:30 | MiniGame Architekture |
+| 16:45 |  |
+| 17:00 |  |
+| 17:15 |  |
+| 17:30 |  |
+| 17:45 |  |
 
 ## Tag 2: Snake
 
@@ -38,9 +38,9 @@ Hier findest du:
 
 | Uhrzeit | Thema |
 |-------|-----------|
-| 15:30 | Recap Tag 1 |
-| 15:45 | ??? |
-| 16:00 | ??? |
+| 15:30 | Begrüßung |
+| 15:45 | Recap Tag 1 |
+| 16:00 | Snake |
 | 16:15 | ??? |
 | 16:30 | ??? |
 | 16:45 | ??? |

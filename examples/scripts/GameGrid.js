@@ -1,4 +1,5 @@
 class GameGrid {
+    //#region constructor
     constructor({ rows, cols, cell }) {
         this.rows = rows
         this.cols = cols
@@ -12,7 +13,9 @@ class GameGrid {
             }
         }
     }
+    //#endregion
 
+    //#region getData
     getData({ row, col }) {
         if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
             return this.data[row][col]
@@ -20,6 +23,7 @@ class GameGrid {
 
         return undefined
     }
+    //#endregion
 
     setData({ row, col, data }) {
         if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {

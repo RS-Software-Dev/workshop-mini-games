@@ -9,11 +9,6 @@
     <link rel="stylesheet" href="style.css">
     <style>
         canvas {
-            --color-alive: white;
-            --color-dead: darkgray;
-        }
-
-        .cool-theme {
             --color-alive: lime;
             --color-dead: color-mix(in srgb, var(--color-alive) 20%, transparent);
         }
@@ -24,43 +19,46 @@
     <script src="scripts/CanvasRenderer.js"></script>
     <script src="scripts/HtmlRenderer.js"></script>
     <script src="scripts/GameLoop.js"></script>
+    <script src="scripts/MiniGame.js"></script>
 
     <script>
-        function updateGameOfLife(grid) {
-            return new GameGrid({
-                rows: grid.rows,
-                cols: grid.cols,
-                cell: ({ row, col }) => {
-                    // Count alive neighbors
-                    let aliveNeighbors = 0;
-                    for (const cell of grid.neighbors({ row, col })) {
-                        if (cell.data) aliveNeighbors++;
-                    }
+        function updateGameOfLife({ generation, grid }) {
+            return {
+                generation: generation + 1,
+                grid: new GameGrid({
+                    rows: grid.rows,
+                    cols: grid.cols,
+                    cell: ({ row, col }) => {
+                        // Count alive neighbors
+                        let aliveNeighbors = 0;
+                        for (const cell of grid.neighbors({ row, col })) {
+                            if (cell.data) aliveNeighbors++;
+                        }
 
-                    const isAlive = grid.getData({ row, col });
+                        const isAlive = grid.getData({ row, col });
 
-                    // Game of Life rules
-                    if (isAlive) {
-                        return aliveNeighbors === 2 || aliveNeighbors === 3;
-                    } else {
-                        return aliveNeighbors === 3;
+                        // Game of Life rules
+                        if (isAlive) {
+                            return aliveNeighbors === 2 || aliveNeighbors === 3;
+                        } else {
+                            return aliveNeighbors === 3;
+                        }
                     }
-                }
-            })
+                })
+            }
         }
 
         function GameOfLife({ parent, rows, cols, tileSize }) {
-            const canvasRenderer = CanvasRenderer.autoAppend({
+            const canvasRenderer = CanvasRenderer.createInside({
                 parent: parent,
-                rows: rows,
-                cols: cols,
-                tileSize: tileSize,
-                draw: function(state) {
+                width: cols * tileSize,
+                height: rows * tileSize,
+                draw: function ({grid}) {
                     const style = getComputedStyle(this.canvas)
                     const colorAlive = style.getPropertyValue('--color-alive')
                     const colorDead = style.getPropertyValue('--color-dead')
 
-                    for (const cell of state.cells()) {
+                    for (const cell of grid.cells()) {
                         this.save()
                         this.translate(
                             cell.col * tileSize + tileSize / 2,
@@ -88,12 +86,9 @@
                 }
             })
 
-            canvasRenderer.canvas.classList.add('cool-theme')
-
-
             statsRenderer = HtmlRenderer.append({
                 parent: parent,
-                template: (grid) => {
+                template: ({generation, grid}) => {
                     let alive = 0
                     for (const cell of grid.cells()) {
                         if (cell.data) {
@@ -104,6 +99,10 @@
                     return `
                     <table>
                         <tbody>
+                            <tr>
+                                <th>Generation:</th>
+                                <td>${generation}</td>
+                            </tr>
                             <tr>
                                 <th>Cells Alive:</th>
                                 <td>${alive}</td>
@@ -116,6 +115,23 @@
                     </table>
                     `
                 }
+            })
+
+            return new MiniGame({
+                state: {
+                    generation: 0,
+                    grid: new GameGrid({
+                        rows,
+                        cols,
+                        cell: () => Math.random() <= 0.5
+                    })
+                },
+                render: (state) => {
+                    //asciiRenderer.render(state)
+                    canvasRenderer.render(state)
+                    statsRenderer.render(state)
+                },
+                update: updateGameOfLife
             })
 
             /*
@@ -153,16 +169,13 @@
                 ]
             })
             */
-
+            /*
             return new GameLoop({
                 launch: () => new GameGrid({
                     rows: rows,
                     cols: cols,
                     cell: () => Math.random() <= 0.5
                 }),
-                /*
-                launch: () => startState,
-                */
                 render: (state) => {
                     //asciiRenderer.render(state)
                     canvasRenderer.render(state)
@@ -170,6 +183,7 @@
                 },
                 update: updateGameOfLife
             })
+            */
         }
     </script>
 
@@ -189,7 +203,16 @@
             tileSize: 16
         })
 
-        game.run()
+        game.render()
+
+        let next = () => {
+            game.update()
+            game.render()
+        }
+
+        setInterval(next, 1000)
+
+        //game.run()
     </script>
 </body>
 
