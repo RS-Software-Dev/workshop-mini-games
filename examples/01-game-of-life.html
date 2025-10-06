@@ -33,11 +33,11 @@
                 cell: ({ row, col }) => {
                     // Count alive neighbors
                     let aliveNeighbors = 0;
-                    for (const { val } of grid.neighbors({ row, col })) {
-                        if (val) aliveNeighbors++;
+                    for (const cell of grid.neighbors({ row, col })) {
+                        if (cell.data) aliveNeighbors++;
                     }
 
-                    const isAlive = grid.getCell({ row, col });
+                    const isAlive = grid.getData({ row, col });
 
                     // Game of Life rules
                     if (isAlive) {
@@ -54,7 +54,38 @@
                 parent: parent,
                 rows: rows,
                 cols: cols,
-                tileSize: tileSize
+                tileSize: tileSize,
+                draw: function(state) {
+                    const style = getComputedStyle(this.canvas)
+                    const colorAlive = style.getPropertyValue('--color-alive')
+                    const colorDead = style.getPropertyValue('--color-dead')
+
+                    for (const cell of state.cells()) {
+                        this.save()
+                        this.translate(
+                            cell.col * tileSize + tileSize / 2,
+                            cell.row * tileSize + tileSize / 2
+                        )
+
+                        if (cell.data) {
+                            this.fillStyle = colorAlive
+                        }
+                        else {
+                            this.fillStyle = colorDead
+                        }
+
+                        const size = tileSize - 2
+                        this.fillRoundRect(
+                            -size / 2,
+                            -size / 2,
+                            size,
+                            size,
+                            size / 4
+                        )
+
+                        this.restore()
+                    }
+                }
             })
 
             canvasRenderer.canvas.classList.add('cool-theme')
@@ -64,8 +95,8 @@
                 parent: parent,
                 template: (grid) => {
                     let alive = 0
-                    for (const { val } of grid.cells()) {
-                        if (val) {
+                    for (const cell of grid.cells()) {
+                        if (cell.data) {
                             alive += 1
                         }
                     }
@@ -87,12 +118,51 @@
                 }
             })
 
+            /*
+            let startState = new GameGrid({
+                rows,
+                cols,
+                cell: () => 0
+            })
+
+            startState.setGrid({
+                row: 0,
+                col: 0,
+                data: [
+                    [1, 1],
+                    [1, 1]
+                ]
+            })
+
+            startState.setGrid({
+                row: 5,
+                col: 0,
+                data: [
+                    [0, 1, 0],
+                    [0, 0, 1],
+                    [1, 1, 1]
+                ]
+            })
+
+            startState.setGrid({
+                row: 4,
+                col: 12,
+                data: [
+                    [0, 1, 0],
+                    [1, 1, 1]
+                ]
+            })
+            */
+
             return new GameLoop({
                 launch: () => new GameGrid({
                     rows: rows,
                     cols: cols,
                     cell: () => Math.random() <= 0.5
                 }),
+                /*
+                launch: () => startState,
+                */
                 render: (state) => {
                     //asciiRenderer.render(state)
                     canvasRenderer.render(state)
