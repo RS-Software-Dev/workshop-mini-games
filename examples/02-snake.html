@@ -14,21 +14,6 @@
             --color-empty: #111;
         }
 
-
-        button {
-            background-color: inherit;
-            color: white;
-            border: 2px solid white;
-            padding: 16px 24px;
-            font-family: monospace;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #333333;
-        }
-
         .game-over {
             color: red;
             font-size: 24px;
@@ -36,13 +21,10 @@
         }
     </style>
 
-    <script src="scripts/GameGrid.js"></script>
     <script src="scripts/ConsoleRenderer.js"></script>
     <script src="scripts/CanvasRenderer.js"></script>
     <script src="scripts/HtmlRenderer.js"></script>
     <script src="scripts/MiniGame.js"></script>
-
-
 
     <script>
         class SnakeState {
@@ -72,6 +54,36 @@
 
             isSnakeAt(row, col) {
                 return this.snake.some(seg => seg.row === row && seg.col === col)
+            }
+        }
+    </script>
+
+    <script>
+        class MoveEvent {
+            constructor(value) {
+                this.value = value
+            }
+
+            static UP = new MoveEvent('up')
+            static LEFT = new MoveEvent('left')
+            static RIGHT = new MoveEvent('right')
+            static DOWN = new MoveEvent('down')
+
+            get rowDirection() {
+                return this.value == "down" ? 1 :
+                    this.value == "up" ? -1 : 0
+            }
+
+            get colDirection() {
+                return this.value == "right" ? 1 :
+                    this.value == "left" ? -1 : 0
+            }
+
+            get direction() {
+                return {
+                    row: this.rowDirection,
+                    col: this.colDirection
+                }
             }
         }
     </script>
@@ -124,68 +136,21 @@
         function tickSnake(state) {
             return state.gameOver ? state : updateSnake(state)
         }
-    </script>
 
+        function updateDirection(state, event) {
+            const prev = state.direction
+            const next = event.direction
 
-    <script>
-        class GameLoop {
-            constructor({ launch, render, update, tickRate }) {
-                this.launch = launch
-                this.render = render
-                this.update = update
-                this.tickRate = tickRate || 1000
-                this.intervalId = null
-                this.state = null
+            if (prev.row + next.row != 0 || prev.col + next.col != 0) {
+                state.nextDirection = next
             }
 
-            run() {
-                this.state = this.launch()
-                this.render(this.state)
-
-                let next = () => {
-                    this.state = this.update(this.state)
-                    this.render(this.state)
-
-                    if (this.state.gameOver && this.intervalId) {
-                        clearInterval(this.intervalId)
-                        this.intervalId = null
-                    }
-                }
-
-                this.intervalId = setInterval(next, this.tickRate)
-            }
-
-            stop() {
-                if (this.intervalId) {
-                    clearInterval(this.intervalId)
-                    this.intervalId = null
-                }
-            }
-
-            restart() {
-                this.stop()
-                this.run()
-            }
+            return state
         }
     </script>
-</head>
 
-<body>
-    <header>
-        <h1>Snake Game</h1>
-        <p>Use Arrow Keys or WASD to move</p>
-    </header>
-
-    <main>
-    </main>
 
     <script>
-        const ROWS = 20
-        const COLS = 30
-        const TILE_SIZE = 20
-
-        const main = document.querySelector('main')
-
         function drawFood({ row, col }) {
             this.save()
             this.translate(
@@ -224,6 +189,24 @@
                 this.restore()
             }
         }
+    </script>
+</head>
+
+<body>
+    <header>
+        <h1>Snake Game</h1>
+        <p>Use Arrow Keys or WASD to move</p>
+    </header>
+
+    <main>
+    </main>
+
+    <script>
+        const ROWS = 20
+        const COLS = 30
+        const TILE_SIZE = 20
+
+        const main = document.querySelector('main')
 
         const canvasRenderer = CanvasRenderer.createInside({
             parent: main,
@@ -240,10 +223,7 @@
             parent: main,
             template: (state) => {
                 return `
-                ${state.gameOver ?
-                        '<span class="game-over">Game Over</span>' :
-                        ''
-                    }
+                ${state.gameOver ? '<span class="game-over">Game Over</span>' : '' }
                 <div>
                     <span>Score:</span>
                     <span>${state.score}</span>
@@ -252,26 +232,6 @@
                 `
             }
         })
-
-        /*
-        const loop = new GameLoop({
-            launch: () => new SnakeState({ rows: ROWS, cols: COLS }),
-            render: (state) => {
-                canvasRenderer.render(state)
-                statsRenderer.render(state)
-
-                // Attach restart handler if game over
-                if (state.gameOver) {
-                    const btn = document.getElementById('restart-btn')
-                    if (btn) {
-                        btn.onclick = () => loop.restart()
-                    }
-                }
-            },
-            update: updateSnake,
-            tickRate: 150
-        })
-            */
 
         const game = new MiniGame({
             state: new SnakeState({
@@ -292,15 +252,7 @@
             },
             update: (state, event) => {
                 if (event instanceof MoveEvent) {
-                    const prev = state.direction
-                    const next = event.direction
-
-                    if (prev.row + next.row != 0 || prev.col + next.col != 0) {
-                        console.log("Change direction")
-                        state.nextDirection = next
-                    }
-
-                    return state
+                    return updateDirection(state, event)
                 }
                 else {
                     return updateSnake(state)
@@ -309,35 +261,6 @@
             }
         })
 
-        class MoveEvent {
-            constructor(value) {
-                this.value = value
-            }
-
-            static UP = new MoveEvent('up')
-            static LEFT = new MoveEvent('left')
-            static RIGHT = new MoveEvent('right')
-            static DOWN = new MoveEvent('down')
-
-            get rowDirection() {
-                return this.value == "down" ? 1 :
-                    this.value == "up" ? -1 : 0
-            }
-
-            get colDirection() {
-                return this.value == "right" ? 1 :
-                    this.value == "left" ? -1 : 0
-            }
-
-            get direction() {
-                return {
-                    row: this.rowDirection,
-                    col: this.colDirection
-                }
-            }
-        }
-
-        game.run(150)
 
         // Input handling
         document.addEventListener('keydown', (e) => {
@@ -353,15 +276,17 @@
                     game.update(MoveEvent.DOWN)
                     break
                 case 'a':
-                case 'arrowleft': 
+                case 'arrowleft':
                     game.update(MoveEvent.LEFT)
                     break
                 case 'd':
-                case 'arrowright': 
+                case 'arrowright':
                     game.update(MoveEvent.RIGHT)
                     break
             }
         })
+
+        game.run(150)
     </script>
 </body>
 
