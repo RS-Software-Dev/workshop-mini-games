@@ -18,31 +18,25 @@
     <script src="scripts/ConsoleRenderer.js"></script>
     <script src="scripts/CanvasRenderer.js"></script>
     <script src="scripts/HtmlRenderer.js"></script>
-    <script src="scripts/GameLoop.js"></script>
     <script src="scripts/MiniGame.js"></script>
 
     <script>
         function updateGameOfLife({ generation, grid }) {
             return {
                 generation: generation + 1,
-                grid: new GameGrid({
-                    rows: grid.rows,
-                    cols: grid.cols,
-                    cell: ({ row, col }) => {
-                        // Count alive neighbors
-                        let aliveNeighbors = 0;
-                        for (const cell of grid.neighbors({ row, col })) {
-                            if (cell.data) aliveNeighbors++;
-                        }
+                grid: grid.map((cell) => {
+                    let aliveNeighbors = 0
+                    for (const neighbor of cell.neighbors()) {
+                        if (neighbor.data) aliveNeighbors++
+                    }
 
-                        const isAlive = grid.getData({ row, col });
+                    const isAlive = cell.data
 
-                        // Game of Life rules
-                        if (isAlive) {
-                            return aliveNeighbors === 2 || aliveNeighbors === 3;
-                        } else {
-                            return aliveNeighbors === 3;
-                        }
+                    // Game of Life rules
+                    if (isAlive) {
+                        return aliveNeighbors === 2 || aliveNeighbors === 3
+                    } else {
+                        return aliveNeighbors === 3
                     }
                 })
             }
@@ -133,62 +127,9 @@
                 },
                 update: updateGameOfLife
             })
-
-            /*
-            let startState = new GameGrid({
-                rows,
-                cols,
-                cell: () => 0
-            })
-
-            startState.setGrid({
-                row: 0,
-                col: 0,
-                data: [
-                    [1, 1],
-                    [1, 1]
-                ]
-            })
-
-            startState.setGrid({
-                row: 5,
-                col: 0,
-                data: [
-                    [0, 1, 0],
-                    [0, 0, 1],
-                    [1, 1, 1]
-                ]
-            })
-
-            startState.setGrid({
-                row: 4,
-                col: 12,
-                data: [
-                    [0, 1, 0],
-                    [1, 1, 1]
-                ]
-            })
-            */
-            /*
-            return new GameLoop({
-                launch: () => new GameGrid({
-                    rows: rows,
-                    cols: cols,
-                    cell: () => Math.random() <= 0.5
-                }),
-                render: (state) => {
-                    //asciiRenderer.render(state)
-                    canvasRenderer.render(state)
-                    statsRenderer.render(state)
-                },
-                update: updateGameOfLife
-            })
-            */
         }
     </script>
-
 </head>
-
 <body>
     <header>
         <h1>Game of Life</h1>
@@ -203,17 +144,7 @@
             tileSize: 16
         })
 
-        game.render()
-
-        let next = () => {
-            game.update()
-            game.render()
-        }
-
-        setInterval(next, 1000)
-
-        //game.run()
+        game.run()
     </script>
 </body>
-
 </html>

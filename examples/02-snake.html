@@ -6,47 +6,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Snake Game</title>
 
+    <link rel="stylesheet" href="style.css">
     <style>
-        body {
-            background-color: black;
-            color: white;
-            font-family: monospace;
-        }
-
-        main,
-        header {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 24px;
-        }
-
         canvas {
-            border: 2px solid white;
             --color-snake: lime;
             --color-food: red;
             --color-empty: #111;
         }
 
-        .cool-theme {
-            --color-snake: cyan;
-            --color-food: magenta;
-            --color-empty: #0a0a1a;
-        }
 
         button {
-            background-color: #333;
+            background-color: inherit;
             color: white;
             border: 2px solid white;
-            padding: 12px 24px;
+            padding: 16px 24px;
             font-family: monospace;
             font-size: 16px;
             cursor: pointer;
         }
 
         button:hover {
-            background-color: #555;
+            background-color: #333333;
         }
 
         .game-over {
@@ -56,35 +36,13 @@
         }
     </style>
 
-    <script>
-        class GameGrid {
-            constructor({ rows, cols, cell }) {
-                this.rows = rows
-                this.cols = cols
-                this.vals = []
+    <script src="scripts/GameGrid.js"></script>
+    <script src="scripts/ConsoleRenderer.js"></script>
+    <script src="scripts/CanvasRenderer.js"></script>
+    <script src="scripts/HtmlRenderer.js"></script>
+    <script src="scripts/MiniGame.js"></script>
 
-                for (let row = 0; row < rows; row++) {
-                    this.vals[row] = [];
-                    for (let col = 0; col < cols; col++) {
-                        this.vals[row][col] = cell(row, col);
-                    }
-                }
-            }
 
-            getCell({ row, col }) {
-                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
-                    return this.vals[row][col]
-                }
-                return undefined
-            }
-
-            setCell({ row, col, value }) {
-                if (0 <= row && row < this.rows && 0 <= col && col < this.cols) {
-                    this.vals[row][col] = value
-                }
-            }
-        }
-    </script>
 
     <script>
         class SnakeState {
@@ -97,7 +55,7 @@
                 this.direction = { row: 0, col: 1 } // Start moving right
                 this.nextDirection = { row: 0, col: 1 }
                 this.food = this.spawnFood()
-                this.gameOver = false
+                this.gameOver = true
                 this.score = 0
             }
 
@@ -114,24 +72,6 @@
 
             isSnakeAt(row, col) {
                 return this.snake.some(seg => seg.row === row && seg.col === col)
-            }
-
-            toGrid() {
-                const grid = new GameGrid({
-                    rows: this.rows,
-                    cols: this.cols,
-                    cell: () => 'empty'
-                })
-
-                // Place food
-                grid.setCell({ row: this.food.row, col: this.food.col, value: 'food' })
-
-                // Place snake
-                this.snake.forEach(seg => {
-                    grid.setCell({ row: seg.row, col: seg.col, value: 'snake' })
-                })
-
-                return grid
             }
         }
     </script>
@@ -182,77 +122,7 @@
         }
     </script>
 
-    <script>
-        class CanvasRenderer {
-            constructor({ canvas, tileSize, cellRenderer }) {
-                this.canvas = canvas
-                this.tileSize = tileSize
-                this.context = canvas.getContext('2d')
-                this.cellRenderer = cellRenderer
-            }
 
-            centerInCell({ row, col, draw }) {
-                this.context.save()
-                this.context.translate(
-                    col * this.tileSize + this.tileSize / 2,
-                    row * this.tileSize + this.tileSize / 2
-                )
-                draw()
-                this.context.restore()
-            }
-
-            fillQuad(size) {
-                this.context.beginPath()
-                this.context.roundRect(-size / 2, -size / 2, size, size, size / 4)
-                this.context.fill()
-                this.context.closePath()
-            }
-
-            render(grid) {
-                this.context.reset()
-                
-                // Let cell renderer set up (e.g., fill background)
-                if (this.cellRenderer.setup) {
-                    this.cellRenderer.setup(this.context, this.canvas)
-                }
-
-                for (let row = 0; row < grid.rows; row++) {
-                    for (let col = 0; col < grid.cols; col++) {
-                        const cell = grid.getCell({ row, col })
-                        
-                        this.centerInCell({
-                            row, col,
-                            draw: () => {
-                                this.cellRenderer.render(cell, this.context, {
-                                    fillQuad: (size) => this.fillQuad(size),
-                                    tileSize: this.tileSize
-                                })
-                            }
-                        })
-                    }
-                }
-            }
-        }
-
-        CanvasRenderer.auto = ({ rows, cols, tileSize, cellRenderer }) => {
-            const canvas = document.createElement('canvas')
-            canvas.width = cols * tileSize
-            canvas.height = rows * tileSize
-            return new CanvasRenderer({ canvas, tileSize, cellRenderer })
-        }
-
-        CanvasRenderer.appendAuto = ({parent, rows, cols, tileSize, cellRenderer}) => {
-            let renderer = CanvasRenderer.auto({
-                rows,
-                cols,
-                tileSize,
-                cellRenderer
-            })
-
-            parent.append(renderer.canvas)
-            return renderer
-        }
-    </script>
 
     <script>
         class SnakeCellRenderer {
@@ -274,7 +144,7 @@
                 } else if (cell === 'food') {
                     context.fillStyle = 'red'
                 }
-                
+
                 helpers.fillQuad(helpers.tileSize - 2)
             }
         }
@@ -298,7 +168,7 @@
                 let next = () => {
                     this.state = this.update(this.state)
                     this.render(this.state)
-                    
+
                     if (this.state.gameOver && this.intervalId) {
                         clearInterval(this.intervalId)
                         this.intervalId = null
@@ -321,25 +191,6 @@
             }
         }
     </script>
-
-    <script>
-        class HtmlRenderer {
-            constructor({ container, template }) {
-                this.container = container
-                this.template = template
-            }
-
-            render(state) {
-                this.container.innerHTML = this.template(state)
-            }
-        }
-
-        HtmlRenderer.append = ({ parent, template }) => {
-            let div = document.createElement('div')
-            parent.append(div)
-            return new HtmlRenderer({ container: div, template })
-        }
-    </script>
 </head>
 
 <body>
@@ -358,17 +209,71 @@
 
         const main = document.querySelector('main')
 
-        const canvasRenderer = CanvasRenderer.appendAuto({
+        function drawFood({ row, col }) {
+            this.save()
+            this.translate(
+                col * TILE_SIZE + TILE_SIZE / 2,
+                row * TILE_SIZE + TILE_SIZE / 2
+            )
+
+            this.fillStyle = "red"
+
+            this.beginPath()
+            this.arc(0, 0, TILE_SIZE / 2, 0, 2 * Math.PI)
+            this.fill()
+
+            this.restore()
+        }
+
+        function drawSnake(snake) {
+            for (const { row, col } of snake) {
+                this.save()
+                this.translate(
+                    col * TILE_SIZE + TILE_SIZE / 2,
+                    row * TILE_SIZE + TILE_SIZE / 2
+                )
+
+                this.fillStyle = "lime"
+                this.beginPath()
+                this.roundRect(
+                    -TILE_SIZE / 2,
+                    -TILE_SIZE / 2,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                    TILE_SIZE / 4
+                )
+                this.fill()
+
+                this.restore()
+            }
+        }
+
+        const canvasRenderer = CanvasRenderer.createInside({
             parent: main,
-            rows: 20,
-            cols: 30,
-            tileSize: 20,
-            cellRenderer: new SnakeCellRenderer
+            width: COLS * TILE_SIZE,
+            height: ROWS * TILE_SIZE,
+            draw: function (state) {
+
+                drawFood.bind(this)(state.food)
+                drawSnake.bind(this)(state.snake)
+            }
         })
 
         const statsRenderer = HtmlRenderer.append({
             parent: main,
             template: (state) => {
+                return `
+                <div>
+                    <span>Score:</span>
+                    <span>${state.score}</span>
+                </div>
+                ${state.gameOver ?
+                    '<span class="game-over">Game Over</span>' :
+                    ''
+                }
+                `
+
+                /*
                 return `
                 <table>
                     <tbody>
@@ -385,13 +290,14 @@
                 </table>
                 ${state.gameOver ? '<button id="restart-btn">Restart Game</button>' : ''}
                 `
+                */
             }
         })
 
         const loop = new GameLoop({
             launch: () => new SnakeState({ rows: ROWS, cols: COLS }),
             render: (state) => {
-                canvasRenderer.render(state.toGrid())
+                canvasRenderer.render(state)
                 statsRenderer.render(state)
 
                 // Attach restart handler if game over

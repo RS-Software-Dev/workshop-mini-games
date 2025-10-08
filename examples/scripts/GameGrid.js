@@ -71,6 +71,14 @@ class GameGrid {
             }
         }
     }
+
+    map(transform) {
+        return new GameGrid({
+            rows: this.rows,
+            cols: this.cols,
+            cell: ({row, col}) => transform(this.getCell({row, col}))
+        })
+    }
 }
 
 class GameCell {
@@ -96,7 +104,7 @@ class GameCell {
     }
 
     *neighbors() {
-        return this.grid.neighbors({
+        yield* this.grid.neighbors({
             row: this.row,
             col: this.col
         })
