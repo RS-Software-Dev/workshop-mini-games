@@ -25,7 +25,9 @@ Hier findest du:
 | 15:45 | Inhalt des Workshops |
 | 16:00 | Game of Life  |
 | 16:15 | HTML Grundgerüst |
-| 16:30 | MiniGame Architekture |
+| 16:20 | |
+
+| 16:30 | Zeichnen auf der Canvas |
 | 16:45 |  |
 | 17:00 |  |
 | 17:15 |  |

@@ -4,37 +4,74 @@ theme: default
 class: text-center font-mono
 lineNumbers: true
 transition: slide-left
+hideInToc: true
 ---
 
 # Game of Life
 
 ---
+hideInToc: true
+---
 
-<<< @/../examples/scripts/GameGrid.js#constructor
+# Inhalt des Workshops
+
+<Toc />
+
+
+---
+layout: two-cols
+---
+
+# HTML/CSS/JS
+
+<ul>
+    <li v-click="1"> HTML definiert die Struktur </li>
+    <li v-click="2"> CSS verändert die Gestaltung </li>
+    <li v-click="3"> JS erweckt das Dokument zum Leben</li>
+</ul>
+
+
+::right::
+
+<<< @/snippets/hallo.html {|1-6,11-18,24-26|7-10|19-23}
 
 ---
 
-```mermaid
-flowchart TD
-    A[Start Game] --> B[Initialize State]
-    B --> C[Game Loop Tick]
-    C --> D{Check for Input / Events}
-    D --> E[Update Game State]
-    E --> F[Render Frame]
-    F --> G{Is Game Over?}
-    G -- No --> C
-    G -- Yes --> H[End Game]
+# Ein Gitter erstellen
 
-```
+---
+
+# Zeichnen mit der Canvas
 
 ---
 layout: center
+hideInToc: true
 ---
 
-# 5min Pause
+# Pause
+
+Wir sehen uns wieder in 5min.
+
+---
+
+# Die Spielregeln
+
+---
+
+# Das Spiel beginnt
 
 ---
 layout: center
+hideInToc: true
 ---
 
-# 10min Pause
+# Pause
+Wir sehen uns wieder in 10min.
+
+---
+
+# Etwas Feinschliff
+
+---
+
+# Eure Ergebnisse

@@ -1,11 +1,11 @@
 class HtmlRenderer {
-    constructor({ parent, template }) {
-        this.parent = parent
+    constructor({ container, template }) {
+        this.container = container
         this.template = template
     }
 
     render(state) {
-        this.parent.innerHTML = this.template(state)
+        this.container.innerHTML = this.template(state)
     }
 }
 
@@ -13,7 +13,7 @@ HtmlRenderer.append = ({ parent, template }) => {
     let div = document.createElement('div')
     parent.append(div)
     return new HtmlRenderer({
-        parent: div,
+        container: div,
         template: template
     })
 }
