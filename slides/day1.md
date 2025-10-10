@@ -7,7 +7,29 @@ transition: slide-left
 hideInToc: true
 ---
 
+# Workshop Mini Games
+
+---
+
+# Begrüßung
+
+## Helena 5min
+## Roman 5min
+- Ich hab in der Schulzeit angefangen
+- Dann studiert und als App Entwickler gearbeitet
+- Während dessen angefangen als Mentor für MYS zu arbeiten
+- Heute freiberuflicher Softwareentwickler
+
+---
+
 # Game of Life
+
+- Von Conway erfunden auf einem Go Brett
+- 0 Player Game
+- Das Spiel besteht aus
+  - Einem Gitterartigen Spielfed
+  - Jede Zelle im Gitter ist entweder lebendig oder tod
+  - Die nächste Generation wird aus
 
 ---
 hideInToc: true
