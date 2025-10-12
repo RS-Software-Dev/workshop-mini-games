@@ -5,19 +5,7 @@ Wir lernen wie wir Webseiten mit HTML strukurieren, mit CSS gestalten und mit Ja
 Dazu wollen wir gemeinsam ein paar klassische Videospiele nachbauen.
 Der Workshop richtet sich an Einsteiger und setzt keine Programmiererfahrung voraus.
 
-TODO:
-- Welche Spiele werden geschrieben?
-- 
-
-Hier findest du:
-- [Das Repository](https://github.com/RS-Software-Dev/workshop-mini-games)
-- [Die Übersicht](https://rs-software-dev.github.io/workshop-mini-games)
-- [Die Präsentation](https://rs-software-dev.github.io/workshop-mini-games/slides)
-
-
 ## Tag 1: Game of Life
-
-[Prototyp](https://rs-software-dev.github.io/workshop-mini-games/01-game-of-life.html)
 
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
 | ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -38,8 +26,6 @@ Hier findest du:
 
 ## Tag 2: Snake
 
-[Prototyp](https://rs-software-dev.github.io/workshop-mini-games/02-snake.html)
-
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
 | ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **15:30 – 15:50** | 20 min | **Begrüßung & Recap**<br>– Kurzer Rückblick auf Tag 1 (Game of Life)<br>– Ziel des Tages: „Snake“ verstehen und umsetzen<br>– Aufbau des Starter-Projekts zeigen     |
@@ -56,8 +42,6 @@ Hier findest du:
 
 
 ## Tag 3: Brick Break
-
-[Prototyp](https://rs-software-dev.github.io/workshop-mini-games/03-brick-break.html)
 
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                    |
 | ----------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
