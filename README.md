@@ -71,4 +71,4 @@ Hier findest du:
 | **17:10 – 17:25** | 15 min | **Level & Styling**<br>– Blöcke farbig gestalten<br>– Paddle/Ball Design verbessern                                                                              |
 | **17:25 – 17:35** | 10 min | **Längere Pause**                                                                                                                                              |
 | **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben**<br> Ideen für Fortgeschrittene:<br>– Verschiedene Blocktypen (härter, Spezialeffekte)<br>– Livesystem<br>– Highscore speichern |
-| **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**<b                                                                                                                                 |
+| **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**<br>– Feedbackrunde<br>– Tipps für eigene Mini-Spiele                                                                              |

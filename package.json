@@ -3,15 +3,10 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "slidev slides/index.md",
     "dev:day1": "slidev slides/day1.md",
     "dev:day2": "slidev slides/day2.md",
     "dev:day3": "slidev slides/day3.md",
-    "build:all": "npm run build:index && npm run build:day1 && npm run build:day2 && npm run build:day3",
-    "build:index": "slidev build slides/index.md --out dist",
-    "build:day1": "slidev build slides/day1.md --out dist/day1",
-    "build:day2": "slidev build slides/day2.md --out dist/day2",
-    "build:day3": "slidev build slides/day3.md --out dist/day3"
+    "build": "slidev build slides/day1.md slides/day2.md slides/day3.md --out ../dist"
   },
   "dependencies": {
     "@slidev/cli": "^52.2.4",
