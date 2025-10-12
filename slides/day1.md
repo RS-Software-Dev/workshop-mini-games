@@ -20,6 +20,16 @@ hideInToc: true
 - Während dessen angefangen als Mentor für MYS zu arbeiten
 - Heute freiberuflicher Softwareentwickler
 
+
+---
+hideInToc: true
+---
+
+# Inhalt des Workshops
+
+<Toc />
+
+
 ---
 
 # Game of Life
@@ -30,14 +40,6 @@ hideInToc: true
   - Einem Gitterartigen Spielfed
   - Jede Zelle im Gitter ist entweder lebendig oder tod
   - Die nächste Generation wird aus
-
----
-hideInToc: true
----
-
-# Inhalt des Workshops
-
-<Toc />
 
 
 ---
