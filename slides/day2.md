@@ -1,12 +1,12 @@
 ---
-title: "Workshop Tag 1: Game of Life"
+title: "Workshop Tag 2: Snake"
 theme: default
 class: text-center font-mono
 lineNumbers: true
 transition: slide-left
 ---
 
-# Game of Life
+# Snake
 
 ---
 

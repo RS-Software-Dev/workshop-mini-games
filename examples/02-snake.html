@@ -14,6 +14,21 @@
             --color-empty: #111;
         }
 
+
+        button {
+            background-color: inherit;
+            color: white;
+            border: 2px solid white;
+            padding: 16px 24px;
+            font-family: monospace;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #333333;
+        }
+
         .game-over {
             color: red;
             font-size: 24px;
@@ -25,6 +40,13 @@
     <script src="scripts/CanvasRenderer.js"></script>
     <script src="scripts/HtmlRenderer.js"></script>
     <script src="scripts/MiniGame.js"></script>
+    <script src="scripts/GameGrid.js"></script>
+    <script src="scripts/ConsoleRenderer.js"></script>
+    <script src="scripts/CanvasRenderer.js"></script>
+    <script src="scripts/HtmlRenderer.js"></script>
+    <script src="scripts/MiniGame.js"></script>
+
+
 
     <script>
         class SnakeState {
@@ -37,7 +59,7 @@
                 this.direction = { row: 0, col: 1 } // Start moving right
                 this.nextDirection = { row: 0, col: 1 }
                 this.food = this.spawnFood()
-                this.gameOver = false
+                this.gameOver = true
                 this.score = 0
             }
 
@@ -146,6 +168,33 @@
             }
 
             return state
+    </script>
+
+
+
+    <script>
+        class SnakeCellRenderer {
+            /*constructor({ canvas }) {
+                this.canvas = canvas
+            }
+
+            setup(context, canvas) {
+                const style = getComputedStyle(canvas)
+                this.colorSnake = style.getPropertyValue('--color-snake')
+                this.colorFood = style.getPropertyValue('--color-food')
+            }*/
+
+            render(cell, context, helpers) {
+                if (cell === 'empty') return
+
+                if (cell === 'snake') {
+                    context.fillStyle = 'lime'
+                } else if (cell === 'food') {
+                    context.fillStyle = 'red'
+                }
+
+                helpers.fillQuad(helpers.tileSize - 2)
+            }
         }
     </script>
 
@@ -187,6 +236,43 @@
                 this.fill()
 
                 this.restore()
+        class GameLoop {
+            constructor({ launch, render, update, tickRate }) {
+                this.launch = launch
+                this.render = render
+                this.update = update
+                this.tickRate = tickRate || 1000
+                this.intervalId = null
+                this.state = null
+            }
+
+            run() {
+                this.state = this.launch()
+                this.render(this.state)
+
+                let next = () => {
+                    this.state = this.update(this.state)
+                    this.render(this.state)
+
+                    if (this.state.gameOver && this.intervalId) {
+                        clearInterval(this.intervalId)
+                        this.intervalId = null
+                    }
+                }
+
+                this.intervalId = setInterval(next, this.tickRate)
+            }
+
+            stop() {
+                if (this.intervalId) {
+                    clearInterval(this.intervalId)
+                    this.intervalId = null
+                }
+            }
+
+            restart() {
+                this.stop()
+                this.run()
             }
         }
     </script>
@@ -209,6 +295,46 @@
         const main = document.querySelector('main')
 
         const canvasRenderer = CanvasRenderer.createInside({
+        function drawFood({ row, col }) {
+            this.save()
+            this.translate(
+                col * TILE_SIZE + TILE_SIZE / 2,
+                row * TILE_SIZE + TILE_SIZE / 2
+            )
+
+            this.fillStyle = "red"
+
+            this.beginPath()
+            this.arc(0, 0, TILE_SIZE / 2, 0, 2 * Math.PI)
+            this.fill()
+
+            this.restore()
+        }
+
+        function drawSnake(snake) {
+            for (const { row, col } of snake) {
+                this.save()
+                this.translate(
+                    col * TILE_SIZE + TILE_SIZE / 2,
+                    row * TILE_SIZE + TILE_SIZE / 2
+                )
+
+                this.fillStyle = "lime"
+                this.beginPath()
+                this.roundRect(
+                    -TILE_SIZE / 2,
+                    -TILE_SIZE / 2,
+                    TILE_SIZE,
+                    TILE_SIZE,
+                    TILE_SIZE / 4
+                )
+                this.fill()
+
+                this.restore()
+            }
+        }
+
+        const canvasRenderer = CanvasRenderer.createInside({
             parent: main,
             width: COLS * TILE_SIZE,
             height: ROWS * TILE_SIZE,
@@ -223,6 +349,18 @@
             parent: main,
             template: (state) => {
                 return `
+                <div>
+                    <span>Score:</span>
+                    <span>${state.score}</span>
+                </div>
+                ${state.gameOver ?
+                    '<span class="game-over">Game Over</span>' :
+                    ''
+                }
+                `
+
+                /*
+                return `
                 ${state.gameOver ? '<span class="game-over">Game Over</span>' : '' }
                 <div>
                     <span>Score:</span>
@@ -230,6 +368,7 @@
                 </div>
                 ${state.gameOver ? '<button id="restart-btn">Restart Game</button>' : ''}
                 `
+                */
             }
         })
 
