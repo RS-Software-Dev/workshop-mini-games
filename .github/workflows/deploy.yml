@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: mcr.microsoft.com/playwright:focal
-      
+
     steps:
       - uses: actions/checkout@v4
       
