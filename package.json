@@ -6,7 +6,7 @@
     "dev:day1": "slidev slides/day1.md",
     "dev:day2": "slidev slides/day2.md",
     "dev:day3": "slidev slides/day3.md",
-    "build": "slidev build slides/day1.md slides/day2.md slides/day3.md --out ../dist"
+    "build": "slidev export slides/day1.md slides/day2.md slides/day3.md --output ../dist"
   },
   "dependencies": {
     "@slidev/cli": "^52.2.4",
