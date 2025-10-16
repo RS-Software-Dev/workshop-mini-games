@@ -30,6 +30,9 @@ jobs:
         
       - name: Build slides
         run: npm run build
+
+      - name: Copy examples
+        run: cp -r examples/ dist/examples
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
