@@ -61,6 +61,8 @@ jobs:
 
       - name: Zip examples folder
         run: |
+          mkdir release
+          
           cp -r day1 starter-kit-1
           rm starter-kit-1/example.html
           rm starter-kit-1/slides.md
