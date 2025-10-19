@@ -10,7 +10,6 @@ transition: slide-left
 
 ---
 
-<<< @/../examples/scripts/GameGrid.js#constructor
 
 ---
 layout: center
