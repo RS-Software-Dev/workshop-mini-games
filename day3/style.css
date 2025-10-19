@@ -1,0 +1,40 @@
+body {
+    background-color: black;
+    color: white;
+    font-family: monospace;
+    width: 100%;
+}
+
+main,
+header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+}
+
+h1 {
+    text-align: center;
+}
+
+canvas {
+    display: block;
+    border: 2px solid white;
+    margin: auto;
+    position: relative;
+}
+
+button {
+    background-color: inherit;
+    color: white;
+    border: 2px solid white;
+    padding: 16px 24px;
+    font-family: monospace;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #333333;
+}

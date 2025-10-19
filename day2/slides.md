@@ -9,10 +9,6 @@ transition: slide-left
 # Snake
 
 ---
-
-<<< @/../examples/scripts/GameGrid.js#constructor
-
----
 layout: center
 ---
 

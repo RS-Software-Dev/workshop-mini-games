@@ -1,6 +1,6 @@
 ---
 title: "Workshop Tag 1: Game of Life"
-theme: ../themes/retro
+theme: default
 class: text-center
 lineNumbers: true
 transition: slide-left
@@ -11,17 +11,11 @@ layout: center
 
 # Workshop Mini Games
 
----
-hideInToc: true
----
-
-# Begrüßung
-
 <!--
-- Ich hab in der Schulzeit angefangen
-- Dann studiert und als App Entwickler gearbeitet
-- Während dessen angefangen als Mentor für MYS zu arbeiten
-- Heute freiberuflicher Softwareentwickler
+- Hi ich bin Roman
+- Ich bin freiberuflicherer Softwareentwickler
+- Seit 2018 auch Mentor bei Make You School
+- Heute schauen wir uns an wie man Mini Spiele programmiert
 -->
 
 
@@ -30,9 +24,33 @@ hideInToc: true
 hideInToc: true
 ---
 
-# Inhalt des Workshops
+<style>
+/* Target all table cells in Markdown slides */
+table td,
+table th {
+  padding: 6px !important;  /* force removal of padding */
+  border: none !important;
+}
 
-<Toc maxDepth="1"/>
+/* Optional: collapse borders for the whole table */
+table {
+  border-collapse: collapse;
+}
+</style>
+
+| Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
+| ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **15:30 – 15:50** | 20 min | **Begrüßung & Einführung**            |
+| **15:50 – 16:05** | 15 min | **HTML-Grundgerüst & Canvas**                 |
+| **16:05 – 16:20** | 15 min | **Raster zeichnen**                                                                          |
+| **16:20 – 16:35** | 15 min | **Simulationsschritt programmieren**                                                                      |
+| **16:35 – 16:40** | 5 min  | **Kurze Pause**                                                                                                                                                    |
+| **16:40 – 16:55** | 15 min | **Automatisches Laufen lassen**                                             |
+| **16:55 – 17:10** | 15 min | **Styling & Usability**                                |
+| **17:10 – 17:25** | 15 min | **Lebende Zellen aktivieren**                                           |
+| **17:25 – 17:35** | 10 min | **Längere Pause**                                                                                                                                                  |
+| **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben**|
+| **17:55 – 18:00** | 5 min  | **Abschluss & Ausblick**                                                                                        |
 
 
 ---
@@ -79,6 +97,7 @@ Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
     <div class="aspect-square border"></div>
     <div class="aspect-square border"></div>
   </div>
+  <h3>Vereinsamung</h3>
 </div>
 
 <div class="flex flex-col items-center w-full">
@@ -93,6 +112,7 @@ Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
     <div class="aspect-square border"></div>
     <div class="aspect-square border"></div>
   </div>
+  <h3>Überbevölkerung</h3>
 </div>
 
 <div class="flex flex-col items-center w-full">
@@ -107,6 +127,7 @@ Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
     <div class="aspect-square border"></div>
     <div class="aspect-square border"></div>
   </div>
+  <h3>Überleben</h3>
 </div>
 
 <div class="flex flex-col items-center w-full">
@@ -121,6 +142,7 @@ Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
     <div class="aspect-square border"></div>
     <div class="aspect-square border"></div>
   </div>
+  <h3>Vermehrung</h3>
 </div>
 
 </div>
@@ -131,42 +153,31 @@ Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
 -->
 
 ---
-
-## Kurze Demo
-
-<!--
-Wenn möglich Live Beispiel einfügen
--->
-
-
----
-
-# Erwartungen & Ziele von heute
-- Am Ende könnt ihr:
-  - ein Raster zeichnen und Zellen rendern
-  - einen Simulationsschritt ausführen und Regeln anwenden
-  - die Simulation automatisch laufen lassen (Start/Stopp)
-  - per Klick Zellen togglen (lebendig/tot)
-
-<!--
-Motiviere die Teilnehmenden: das ist überschaubar und macht Spaß.
-Erwähne Möglichkeit für Fragen & Hilfestellungen während der Implementierung.
--->
-
----
 layout: center
-hideInToc: true
 ---
 
-# Grundgerüst
+<h2><a href="./example.html">Beispiel</a></h2>
+
+
 
 ---
 
-## Unsere Werkzeuge heute
-- HTML: Grundgerüst & `<canvas>` für die Darstellung
-- CSS: Styling, Größen und Farben
-- JavaScript: Datenstrukturen und Spiellogik
-- Starter-Dateien: `index.html`, `style.css`, `main.js` (bereitgestellt)
+# Unsere Ziele
+- Ein Gitter zeichnen
+- Einen Simulationsschritt ausführen
+- Die Simulation automatisch laufen lassen (Start/Stopp)
+- Per Klick Zellen togglen (lebendig/tot)
+
+---
+
+# Unsere Werkzeuge
+- Text-Editor
+  - z.B. Notepad++, VSCodium, CodePen
+- Browser
+  - z.B. Firefox, Chrome, Safari 
+- Starter Kit
+  - `index.html` ist unsere Hauptseite
+  - `lib/` enthält Hilfreiche Scripte
 
 <!--
 Erkläre kurz, wie das Starter-Kit geöffnet wird (VS Code / Live Server / einfach im Browser).
@@ -174,59 +185,23 @@ Sage, wo sie die Dateien finden (Repo/ZIP).
 -->
 
 ---
-layout: two-cols
+layout: center
 ---
 
-# HTML-Grundgerüst & Canvas
+# Live Coding
 
-<ul>
-    <li v-click="1"> HTML definiert die Struktur </li>
-    <li v-click="2"> CSS verändert die Gestaltung </li>
-    <li v-click="3"> JS erweckt das Dokument zum Leben</li>
-</ul>
-
-
-::right::
-
-<<< @/snippets/hallo.html {|1-6,11-18,24-26|7-10|19-23}
-
----
-
-# Raster zeichnen
-
----
-
-# Simulationsschritt programmieren
 
 ---
 layout: center
-hideInToc: true
----
-
-# Pause
-
-Wir sehen uns wieder in 5min.
-
----
-
-# Automatisches Laufen lassen
-
----
-
-# Styling & Usability
-
----
-layout: center
-hideInToc: true
----
-
-# Pause
-Wir sehen uns wieder in 10min.
-
----
-
-# Freies Üben / Bonusaufgaben
-
 ---
 
 # Abschluss
+
+---
+layout: center
+---
+
+# Nächstes Mal
+
+## Snake
+Am 22.10. um 15:30

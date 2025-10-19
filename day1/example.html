@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game of Life</title>
+
+    <link rel="stylesheet" href="./lib/style.css">
+    <style>
+        canvas {
+            --color-alive: lime;
+            --color-dead: color-mix(in srgb, var(--color-alive) 20%, transparent);
+        }
+
+        .controls {
+            margin: 16px;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 8px
+        }
+    </style>
+
+    <script src="./lib/GameGrid.js"></script>
+    <script src="./lib/MiniGame.js"></script>
+
+    <script>
+        function makeGameOfLife({ canvas, rows, cols, size }) {
+            canvas.width = cols * size
+            canvas.height = rows * size
+
+            const context = canvas.getContext("2d")
+
+            function updateGrid(grid) {
+                return new GameGrid({
+                    rows,
+                    cols,
+                    cell: ({ row, col }) => {
+                        let aliveNeighbors = 0
+                        for (const neighbor of grid.neighbors({ row, col })) {
+                            if (neighbor.data) aliveNeighbors++
+                        }
+
+                        const isAlive = grid.data[row][col]
+
+                        // Game of Life rules
+                        if (isAlive) {
+                            return aliveNeighbors === 2 || aliveNeighbors === 3
+                        } else {
+                            return aliveNeighbors === 3
+                        }
+                    }
+                })
+            }
+
+            function renderGrid(grid) {
+                context.reset()
+
+                const style = getComputedStyle(canvas)
+                const colorAlive = style.getPropertyValue('--color-alive')
+                const colorDead = style.getPropertyValue('--color-dead')
+
+                for (const cell of grid.cells()) {
+                    if (cell.data) {
+                        context.fillStyle = colorAlive
+                    }
+                    else {
+                        context.fillStyle = colorDead
+                    }
+
+                    context.fillRect(size * cell.col, size * cell.row, size, size)
+                }
+            }
+
+
+            const game = new MiniGame({
+                state: {
+                    generation: 0,
+                    grid: new GameGrid({
+                        rows,
+                        cols,
+                        cell: () => Math.random() <= 0.5
+                    })
+                },
+                render: ({ generation, grid }) => {
+                    console.log("Generation: " + generation)
+                    renderGrid(grid)
+                },
+                update: ({ generation, grid }) => ({
+                    generation: generation + 1,
+                    grid: updateGrid(grid)
+                })
+            })
+
+            // setup on click handler
+            canvas.addEventListener('click', (event) => {
+                console.log(event)
+
+                // determine which cell was clicked
+                const col = Math.floor(event.layerX / size)
+                const row = Math.floor(event.layerY / size)
+
+                // toggle cell in the current grid
+                const { grid } = game.state
+                grid.data[row][col] = !grid.data[row][col]
+
+                // immediately re-render
+                game.render()
+            })
+
+            return game
+        }    
+    </script>
+</head>
+
+<body>
+    <h1>Game of Life</h1>
+
+    <canvas id="main">
+
+    </canvas>
+    <div class="controls">
+        <button onclick="game.update() ; game.render()">Update</button>
+        <button onclick="game.run()">Start</button>
+        <button onclick="game.stop()">Stop</button>
+    </div>
+
+    <script>
+        const game = makeGameOfLife({
+            canvas: document.querySelector('#main'),
+            rows: 30,
+            cols: 40,
+            size: 16
+        })
+
+        game.render()
+        //game.run()
+    </script>
+</body>
+
+</html>
