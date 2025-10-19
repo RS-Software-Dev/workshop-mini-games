@@ -65,11 +65,8 @@ layout: center
 ## Was ist das "Game of Life"?
 - Kein klassisches Spiel — eine **Zellulärer Automat** von John Conway (1970)
 - Jede Zelle hat zwei Zustände: **lebendig** oder **tot**
-- Regeln (für **nächste Generation**):
-  1. Lebende Zelle mit <2 Nachbarn → stirbt (Unterbevölkerung)
-  2. Lebende Zelle mit 2 oder 3 Nachbarn → bleibt leben
-  3. Lebende Zelle mit >3 Nachbarn → stirbt (Überbevölkerung)
-  4. Tote Zelle mit genau 3 Nachbarn → wird lebendig (Reproduktion)
+- Der **nächste Generation** Zustand wird nach festen Regeln berechnet
+- Komplexe Muster möglich
 
 <!--
 Erkläre anhand eines kleinen 3x3- oder 5x5-Beispiels: zähle Nachbarn.
