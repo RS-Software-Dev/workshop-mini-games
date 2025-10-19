@@ -33,7 +33,9 @@ jobs:
         run: npm run build
 
       - name: Copy examples
-        run: cp -r examples/ dist/examples
+        run: |
+          cp -r day1/lib/ dist/day1/lib/
+          cp day1/example.html dist/day1/example.html
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
