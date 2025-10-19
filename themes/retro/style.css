@@ -1,0 +1,41 @@
+/* === Retro Theme Styles === */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+
+/* Grundfarben und Schriftarten */
+:root {
+  --slidev-font-family: 'Share Tech Mono', monospace;
+  --slidev-code-font-family: 'Share Tech Mono', monospace;
+  --slidev-heading-font-family: 'Press Start 2P', monospace;
+
+  /* Akzentfarben */
+  --slidev-theme-primary: #00ffff; /* Cyan */
+  --slidev-theme-secondary: #ff00ff; /* Magenta */
+  --slidev-theme-bg: #111;
+  --slidev-theme-text: #ddd;
+}
+
+/* Grundlegendes Retro-Look & Feel */
+html, body {
+  background-color: var(--slidev-theme-bg);
+  color: var(--slidev-theme-text);
+  font-family: var(--slidev-font-family);
+}
+
+/* Überschriften: groß, pixelig, mit leichtem Neon-Vibe */
+h1, h2, h3 {
+  font-family: var(--slidev-heading-font-family);
+  color: var(--slidev-theme-primary);
+}
+
+/* Code und Monospace Text */
+code, pre {
+  background-color: #222;
+  color: #00ffff;
+  padding: 0.25em 0.5em;
+  border-radius: 0.25em;
+}
+
+/* Optional: kleine Rahmen um Slides */
+.slidev-layout {
+  padding: 32px;
+}

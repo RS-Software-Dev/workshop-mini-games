@@ -1,0 +1,21 @@
+/* === shared/styles.css === */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&display=swap');
+
+:root {
+  /* Default text and code font */
+  --slidev-font-family: 'Share Tech Mono', monospace;
+  --slidev-code-font-family: 'Share Tech Mono', monospace;
+
+  /* Headings use Press Start 2P */
+  --slidev-heading-font-family: 'Press Start 2P', monospace;
+}
+
+/* Optional: leichtes Tuning */
+h1, h2, h3 {
+  letter-spacing: 1px;
+  font-family: var(--slidev-heading-font-family);
+}
+
+body {
+    font-family: var(--slidev-font-family);
+}

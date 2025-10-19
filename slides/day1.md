@@ -1,12 +1,13 @@
 ---
 title: "Workshop Tag 1: Game of Life"
-theme: default
-class: text-center font-mono
+theme: ../themes/retro
+class: text-center
 lineNumbers: true
 transition: slide-left
 hideInToc: true
 layout: center
 ---
+
 
 # Workshop Mini Games
 
@@ -16,12 +17,13 @@ hideInToc: true
 
 # Begrüßung
 
-## Helena 5min
-## Roman 5min
+<!--
 - Ich hab in der Schulzeit angefangen
 - Dann studiert und als App Entwickler gearbeitet
 - Während dessen angefangen als Mentor für MYS zu arbeiten
 - Heute freiberuflicher Softwareentwickler
+-->
+
 
 
 ---
@@ -35,7 +37,6 @@ hideInToc: true
 
 ---
 layout: center
-hideInToc: true
 ---
 
 # Einführung
@@ -55,6 +56,78 @@ hideInToc: true
 <!--
 Erkläre anhand eines kleinen 3x3- oder 5x5-Beispiels: zähle Nachbarn.
 Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
+-->
+
+---
+
+
+<h2 class="text-center text-4xl mb-8 mt-4">
+   Die Spielregeln
+</h2>
+
+<div class="grid grid-cols-4 gap-4 text-center text-sm w-full mt-16">
+
+<div class="flex flex-col items-center w-full">
+  <div class="w-full grid grid-cols-3 gap-1">
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square bg-lime-500 border-4 border-red-500"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+  </div>
+</div>
+
+<div class="flex flex-col items-center w-full">
+  <div class="w-full grid grid-cols-3 gap-1">
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square bg-lime-500 border-4 border-red-500"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+  </div>
+</div>
+
+<div class="flex flex-col items-center w-full">
+  <div class="w-full grid grid-cols-3 gap-1">
+    <div class="aspect-square border"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square bg-lime-500 border-4 border-red-500"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+  </div>
+</div>
+
+<div class="flex flex-col items-center w-full">
+  <div class="w-full grid grid-cols-3 gap-1">
+    <div class="aspect-square border"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square border-4 border-red-500"></div>
+    <div class="aspect-square bg-lime-500 border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+    <div class="aspect-square border"></div>
+  </div>
+</div>
+
+</div>
+
+<!--
+4 Regeln:
+1. Eine Zelle 
 -->
 
 ---
