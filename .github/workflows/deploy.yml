@@ -59,9 +59,13 @@ jobs:
 
       - name: Zip examples folder
         run: |
-          mkdir -p release
-          zip -r release/examples.zip examples
-          tar -czf release/examples.tar.gz examples
+          cp -r day1 starter-kit-1
+          rm starter-kit-1/example.html
+          rm starter-kit-1/slides.md
+          mv starter-kit-1/template.html starter-kit-1/index.html
+
+          zip -r release/starter-kit-1.zip starter-kit-1
+          tar -czf release/starter-kit-1.tar.gz starter-kit-1
 
       - name: Create GitHub Release
         id: create_release
@@ -78,8 +82,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/examples.zip
-          asset_name: examples.zip
+          asset_path: ./release/starter-kit-1.zip
+          asset_name: starter-kit-1.zip
           asset_content_type: application/zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -88,8 +92,8 @@ jobs:
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./release/examples.tar.gz
-          asset_name: examples.tar.gz
+          asset_path: ./release/starter-kit-1.tar.gz
+          asset_name: starter-kit-1.tar.gz
           asset_content_type: application/gzip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
