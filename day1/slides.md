@@ -92,7 +92,7 @@ layout: center
 
 <div class="grid grid-cols-4 gap-4 text-center text-sm w-full mt-16">
 
-<div class="flex flex-col items-center w-full">
+<div class="flex flex-col items-center w-full" v-click>
   <div class="w-full grid grid-cols-3 gap-1">
     <div class="aspect-square border"></div>
     <div class="aspect-square border"></div>
@@ -107,7 +107,7 @@ layout: center
   <h3>Vereinsamung</h3>
 </div>
 
-<div class="flex flex-col items-center w-full">
+<div class="flex flex-col items-center w-full" v-click>
   <div class="w-full grid grid-cols-3 gap-1">
     <div class="aspect-square bg-lime-500 border"></div>
     <div class="aspect-square bg-lime-500 border"></div>
@@ -122,7 +122,7 @@ layout: center
   <h3>Überbevölkerung</h3>
 </div>
 
-<div class="flex flex-col items-center w-full">
+<div class="flex flex-col items-center w-full" v-click>
   <div class="w-full grid grid-cols-3 gap-1">
     <div class="aspect-square border"></div>
     <div class="aspect-square bg-lime-500 border"></div>
@@ -137,7 +137,7 @@ layout: center
   <h3>Überleben</h3>
 </div>
 
-<div class="flex flex-col items-center w-full">
+<div class="flex flex-col items-center w-full" v-click>
   <div class="w-full grid grid-cols-3 gap-1">
     <div class="aspect-square border"></div>
     <div class="aspect-square bg-lime-500 border"></div>
@@ -155,8 +155,10 @@ layout: center
 </div>
 
 <!--
-4 Regeln:
-1. Eine Zelle 
+1. Vereinsamung: Eine lebendige Zelle mit weniger als 2 Nachbarn stirbt
+2. Überbevölkerung: Eine lebendige Zelle mit mehr als 3 Nachbarn stirbt
+3. Überleben: Eine lebendige Zelle mit 2 oder 3 Nachbarn bleibt am Leben
+4. Vemehrung: Eine tote Zelle mit genau 3 Nachbarn wird lebendig
 -->
 
 

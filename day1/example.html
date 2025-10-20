@@ -35,10 +35,11 @@
 
     </canvas>
     <div class="controls">
-        <button onclick="game.update() ; game.render()">Update</button>
+        <button onclick="game.tick()">Update</button>
         <button onclick="game.run()">Start</button>
         <button onclick="game.stop()">Stop</button>
     </div>
+
 
     <script>
         const game = makeGameOfLife({

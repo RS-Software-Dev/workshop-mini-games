@@ -193,3 +193,8 @@ canvas.addEventListener('click', (event) => {
 17:35 - 17:55
 
 
+
+
+
+## Links
+- https://de.wikipedia.org/wiki/Conways_Spiel_des_Lebens
