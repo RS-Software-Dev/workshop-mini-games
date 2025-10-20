@@ -25,12 +25,12 @@ class MiniGame {
         this.stop()
         this.render()
 
-        let next = () => {
-            this.update()
-            this.render()
-        }
+        this.intervalId = setInterval(() => this.tick(), interval)
+    }
 
-        this.intervalId = setInterval(next, interval)
+    tick() {
+        this.update()
+        this.render()
     }
 
     stop() {

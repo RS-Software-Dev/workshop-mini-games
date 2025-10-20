@@ -63,10 +63,9 @@ jobs:
         run: |
           mkdir release
           
-          cp -r day1 starter-kit-1
-          rm starter-kit-1/example.html
-          rm starter-kit-1/slides.md
-          mv starter-kit-1/template.html starter-kit-1/index.html
+          mkdir starter-kit-1
+          cp -r day1/lib starter-kit-1/lib
+          cp day1/template.html starter-kit-1/index.html
 
           zip -r release/starter-kit-1.zip starter-kit-1
           tar -czf release/starter-kit-1.tar.gz starter-kit-1

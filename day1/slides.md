@@ -41,7 +41,7 @@ table {
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
 | ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **15:30 – 15:50** | 20 min | **Begrüßung & Einführung**            |
-| **15:50 – 16:05** | 15 min | **HTML-Grundgerüst & Canvas**                 |
+| **15:50 – 16:05** | 15 min | **HTML-Grundgerüst**                 |
 | **16:05 – 16:20** | 15 min | **Raster zeichnen**                                                                          |
 | **16:20 – 16:35** | 15 min | **Simulationsschritt programmieren**                                                                      |
 | **16:35 – 16:40** | 5 min  | **Kurze Pause**                                                                                                                                                    |
@@ -60,25 +60,28 @@ layout: center
 # Einführung
 
 ---
-layout: center
----
 
-<h2><a href="./example.html">Beispiel</a></h2>
-
-
----
 
 ## Was ist das "Game of Life"?
+<v-clicks>
+
 - Kein klassisches Spiel — eine **Zellulärer Automat** von John Conway (1970)
 - Jede Zelle hat zwei Zustände: **lebendig** oder **tot**
 - Der **nächste Generation** Zustand wird nach festen Regeln berechnet
 - Komplexe Muster möglich
 
+</v-clicks>
 <!--
 - Keine Spieler, da es keine Entscheidungsmöglichkeit gibt
 - Binäre Zustände
-- 
 -->
+
+---
+layout: center
+---
+
+<h2><a href="./example.html">Beispiel</a></h2>
+
 
 ---
 
@@ -172,12 +175,12 @@ layout: center
 
 # Unsere Werkzeuge
 - Text-Editor
-  - z.B. Notepad++, VSCodium, CodePen
+  - z.B. Notepad++, VSCodium, <a href="https://codepen.io/pen/"> CodePen </a>
 - Browser
   - z.B. Firefox, Chrome, Safari 
-- Starter Kit
+- <a href="https://github.com/RS-Software-Dev/workshop-retro-games/releases/latest">Starter Kit</a>
   - `index.html` ist unsere Hauptseite
-  - `lib/` enthält Hilfreiche Scripte
+  - `lib/` enthält hilfreiche Skripte
 
 <!--
 Erkläre kurz, wie das Starter-Kit geöffnet wird (VS Code / Live Server / einfach im Browser).
