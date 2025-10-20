@@ -36,6 +36,7 @@ jobs:
         run: |
           cp -r day1/lib/ dist/day1/lib/
           cp day1/example.html dist/day1/example.html
+          cp day1/example.js dist/day1/example.js
         
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

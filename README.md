@@ -7,6 +7,11 @@ Der Workshop richtet sich an Einsteiger und setzt keine Programmiererfahrung vor
 
 ## Tag 1: Game of Life
 
+
+- [Beispiel](https://gh.rs-software.dev/day1/example.html)
+- [Folien](https://gh.rs-software.dev/day1/)
+- [Starter Kit](https://github.com/RS-Software-Dev/workshop-retro-games/releases/latest)
+
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
 | ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **15:30 – 15:50** | 20 min | **Begrüßung & Einführung**<br>– Kurze Vorstellungsrunde<br>– Was ist ein “Game of Life”? (Beispiel zeigen)<br>– Überblick über HTML, CSS & JS im Projekt             |
