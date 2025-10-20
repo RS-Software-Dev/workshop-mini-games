@@ -1,5 +1,17 @@
 # Notizen: Game of Life
 
+Folien:
+https://gh.rs-software.dev/day1/
+
+Beispiel:
+https://gh.rs-software.dev/day1/example.html
+
+Starter Kit:
+https://github.com/RS-Software-Dev/workshop-retro-games/releases/latest
+
+Canvas API:
+https://developer.mozilla.org/de/docs/Web/API/CanvasRenderingContext2D
+
 ## HTML Grundgerüst
 15:50 - 16:05
 
@@ -14,8 +26,6 @@ console.log("Hallo JavaScript")
 }
 ```
 
-
-
 ```
 function makeGameOfLife({canvas, rows, cols, size}) {
     canvas.width = cols * size
@@ -23,22 +33,11 @@ function makeGameOfLife({canvas, rows, cols, size}) {
 }
 ```
 
+- In eigene Datein verschieben?
+
 
 ## Raster zeichnen 
 16:05 - 16:20
-
-```
-const context = canvas.getContext("2d")
-const grid = makeRandomGrid({rows, cols}) 
-context.fillStyle = "lime"
-
-for (let row = 0; row < rows; row++) {
-  for (let col = 0; col < cols; col++) {
-    context.strokeRect(col * size, row * size, size, size)
-  }
-}
-```
-
 
 ```
 function makeRandomGrid({ rows, cols }) {
@@ -47,6 +46,20 @@ function makeRandomGrid({ rows, cols }) {
         cols,
         cell: () => Math.random() <= 0.5
     })
+}
+```
+
+```
+const context = canvas.getContext("2d")
+const grid = makeRandomGrid({rows, cols}) 
+context.fillStyle = "lime"
+context.strokeStyle = "white"
+context.lineWidth = 2.0
+
+for (let row = 0; row < rows; row++) {
+  for (let col = 0; col < cols; col++) {
+    context.strokeRect(col * size, row * size, size, size)
+  }
 }
 ```
 
@@ -110,6 +123,8 @@ renderGrid(grid)
 
 ## Kurze Pause
 16:35 - 16:40
+
+
 
 ## Automatische Updates
 16:40 - 16:55

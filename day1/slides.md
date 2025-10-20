@@ -207,4 +207,4 @@ layout: center
 # Nächstes Mal
 
 ## Snake
-Am 22.10. um 15:30
+Am Mi. 22.10. um 15:30
