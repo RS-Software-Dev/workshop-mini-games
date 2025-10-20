@@ -192,9 +192,12 @@ canvas.addEventListener('click', (event) => {
 ## Freies Üben
 17:35 - 17:55
 
-
-
+- Farben und Formen anpassen
+- Eingabefeld/Slider für Geschwindigkeit
+- Muster ausprobieren
+- So lange wie möglich Überleben
 
 
 ## Links
 - https://de.wikipedia.org/wiki/Conways_Spiel_des_Lebens
+- https://conwaylife.appspot.com/library/

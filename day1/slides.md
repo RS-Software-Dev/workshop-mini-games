@@ -9,7 +9,8 @@ layout: center
 ---
 
 
-# Workshop Retro Games
+# Game of Life
+## Workshop Retro Games
 
 <!--
 - Hi ich bin Roman
@@ -45,9 +46,9 @@ table {
 | **16:05 – 16:20** | 15 min | **Raster zeichnen**                                                                          |
 | **16:20 – 16:35** | 15 min | **Simulationsschritt programmieren**                                                                      |
 | **16:35 – 16:40** | 5 min  | **Kurze Pause**                                                                                                                                                    |
-| **16:40 – 16:55** | 15 min | **Automatisches Laufen lassen**                                             |
+| **16:40 – 16:55** | 15 min | **Automatische Updates**                                             |
 | **16:55 – 17:10** | 15 min | **Styling & Usability**                                |
-| **17:10 – 17:25** | 15 min | **Lebende Zellen aktivieren**                                           |
+| **17:10 – 17:25** | 15 min | **Click Handler**                                           |
 | **17:25 – 17:35** | 10 min | **Längere Pause**                                                                                                                                                  |
 | **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben**|
 | **17:55 – 18:00** | 5 min  | **Abschluss & Ausblick**                                                                                        |
@@ -160,9 +161,6 @@ layout: center
 3. Überleben: Eine lebendige Zelle mit 2 oder 3 Nachbarn bleibt am Leben
 4. Vemehrung: Eine tote Zelle mit genau 3 Nachbarn wird lebendig
 -->
-
-
-
 
 
 ---
