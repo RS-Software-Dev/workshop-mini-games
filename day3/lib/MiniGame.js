@@ -1,0 +1,61 @@
+class MiniGame {
+    #render
+    #update
+
+    constructor({ state, render, update }) {
+        this.state = state
+
+        this.#render = render
+        this.#update = update
+    }
+
+    render() {
+        this.#render(this.state)
+    }
+
+    update(input) {
+        this.state = this.#update(this.state, input)
+    }
+
+    get isRunning() {
+        return this.intervalId != null
+    }
+
+    stop() {
+        if(this.isRunning) {
+            clearInterval(this.intervalId)
+        }
+    }
+
+    run({interval }) {
+        this.stop()
+        this.render()
+
+        if(interval) {
+            this.intervalId = setInterval(() => this.handle("tick", interval), interval)
+        }
+        else {
+            
+            requestAnimationFrame((t0) => {
+                let lastTime = t0
+                let tick = (time) => {
+                    this.handle({ type: "tick", timePassed: time - lastTime})
+                    lastTime = time
+                }
+
+                function loop(time) {
+                    tick(time)
+                    requestAnimationFrame(loop)
+                }
+
+                requestAnimationFrame(loop)
+            })
+        }
+    }
+
+    handle(input) {
+        this.update(input)
+        this.render()
+    }
+}
+
