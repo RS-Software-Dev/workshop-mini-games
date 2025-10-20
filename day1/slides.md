@@ -9,13 +9,13 @@ layout: center
 ---
 
 
-# Workshop Mini Games
+# Workshop Retro Games
 
 <!--
 - Hi ich bin Roman
 - Ich bin freiberuflicherer Softwareentwickler
 - Seit 2018 auch Mentor bei Make You School
-- Heute schauen wir uns an wie man Mini Spiele programmiert
+- Heute schauen wir uns an wie man Retro Spiele im Browser programmiert
 -->
 
 
@@ -59,6 +59,12 @@ layout: center
 
 # Einführung
 
+---
+layout: center
+---
+
+<h2><a href="./example.html">Beispiel</a></h2>
+
 
 ---
 
@@ -69,8 +75,9 @@ layout: center
 - Komplexe Muster möglich
 
 <!--
-Erkläre anhand eines kleinen 3x3- oder 5x5-Beispiels: zähle Nachbarn.
-Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
+- Keine Spieler, da es keine Entscheidungsmöglichkeit gibt
+- Binäre Zustände
+- 
 -->
 
 ---
@@ -149,11 +156,7 @@ Zeige auf, dass einfache Regeln komplexe Muster erzeugen.
 1. Eine Zelle 
 -->
 
----
-layout: center
----
 
-<h2><a href="./example.html">Beispiel</a></h2>
 
 
 
