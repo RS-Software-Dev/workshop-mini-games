@@ -101,9 +101,9 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
 
     function renderScore({hits, sum}, isGameOver) {
         overlay.innerHTML = `
+        ${isGameOver ? '<span class="game-over">Game Over</span>' : ''}
         <div class="score">
             <span>Hits: ${hits}</span>
-            ${isGameOver ? '<span class="game-over">Game Over</span>' : ''}
             <span>Sum: ${sum}</span>
         </div>
         `
