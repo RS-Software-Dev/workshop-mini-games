@@ -1,11 +1,4 @@
 
-function gameOverTemplate({score}) {
-    return `
-    <span class="game-over">Game Over</span>
-    <p class="score">Score: ${score}</p>
-    `
-}
-
 function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
     canvas.width = cols * size
     canvas.height = rows * size
@@ -19,7 +12,7 @@ function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
     }
 
     // Füllt das Feld mit einem Kreis.
-    function fillCircle({row, col}) {
+    function fillCircle({ row, col }) {
         const r = size / 2
         const x = col * size + r
         const y = row * size + r
@@ -65,9 +58,10 @@ function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
 
     // Zeichnet den Game Over screen, wenn das Spiel vorbei ist.
     function renderStats(state) {
-        overlay.innerHTML = state.isGameOver ?
-            gameOverTemplate({ score: state.snake.segments.length }) :
-            ''
+        overlay.innerHTML = `
+        <span class="score">Score: ${state.snake.segments.length}</span>
+        ${state.isGameOver ? '<span class="game-over">Game Over</span>' : ''}
+        `
     }
 
     // Fügt ein neues Segment zur Schlange hinzu und achtet darauf, 
