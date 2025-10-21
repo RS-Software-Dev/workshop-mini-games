@@ -27,22 +27,17 @@ table {
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
 | ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **15:30 – 15:50** | 20 min | **Begrüßung & Rückblick**    |
-| **15:50 – 16:05** | 15 min | **Spielfeld & Setup**                                             |
-| **16:05 – 16:20** | 15 min | **Bewegung der Schlange**                                                    |
+| **15:50 – 16:05** | 15 min | **Spielfeld zeichnen**                                             |
+| **16:05 – 16:20** | 15 min | **Schlange bewegen**                                                    |
 | **16:20 – 16:35** | 15 min | **Steuerung per Tastatur**                                                                    |
 | **16:35 – 16:45** | 10 min | **Längere Pause**                                                                                                                                                  |
-| **16:45 – 17:00** | 15 min | **Futter einbauen**                                                                                         |
-| **17:00 – 17:15** | 15 min | **Wachstum & Punkte**                                                                              |
-| **17:15 – 17:30** | 15 min | **Game Over-Logik**                                                                          |
+| **16:45 – 17:00** | 15 min | **Frucht einsammeln**                                                                                         |
+| **17:00 – 17:15** | 15 min | **Kollision mit Schlange**                                                                              |
+| **17:15 – 17:30** | 15 min | **Game Over**                                                                          |
 | **17:30 – 17:35** | 5 min  | **Kurze Pause**                                                                                                                                                    |
 | **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben** |
 | **17:55 – 18:00** | 5 min  | **Abschluss & Ausblick**                                                                               |
 
----
-layout: center
----
-
-# Rückblick
 
 ---
 
@@ -54,22 +49,80 @@ layout: center
   - `update`: Berechnet Zustand
 
 ---
+layout: two-cols
+---
 
-# Dieses Mal: Snake
-- Verschiedene Gründe für Updates:
-  - Richtung der Schlange ändert sich
-  - Zeit schreitet voran
-  - Spiel neustarten
+# Dieses Mal: <a href="./example.html">Snake</a>
+<v-clicks>
+
 - Zustände:
   - Game Over
-  - Eine Frucht
-  - Eine Schlange
+  - Frucht
+  - Schlange
+- Zeichnen:
+  - Game Over
+  - Frucht
+  - Schlange
+- Verändern:
+  - Zeit schreitet voran
+  - Bewegunsrichtung ändern
+  - Spiel zurücksetzten
+
+</v-clicks>
+
+::right::
+
+<v-clicks>
+
+```js
+new MiniGame({
+  state: {
+    isGameOver: false,
+    fruit: { row: 0, col: 0 },
+    snake: {
+      segments: [{ row: 1, col: 1 }],
+      oldDirection: DIR_UP,
+      newDirection: DIR_UP
+    }
+  },
+  render: (state) => {
+    renderSnake(state.snake)
+    renderFruit(state.fruit)
+    renderStats(state)
+  },
+  update: (state, { type, args }) => {
+    switch (type) {
+      case "move":
+        return updateMove(state, args)
+      case "tick":
+        return updateTick(state)
+      case "reset":
+        return makeRandomState()
+    }
+  }
+})
+```
+
+</v-clicks>
+
+---
+
+# Unser <a href="https://github.com/RS-Software-Dev/workshop-retro-games/releases/latest">Starter Kit</a>
+
+- `lib/`
+  - `MiniGame.js`
+  - `MiniGrid.js` 
+  - `SnakeHelper.js` 
+- `index.html`
+- `main.js`
+
+
 
 ---
 layout: center
 ---
 
-<h2><a href="./example.html">Beispiel</a></h2>
+Live Coding
 
 
 
@@ -78,6 +131,6 @@ layout: center
 
 # Bonusaufgaben
 - Zeichne den Kopf der Schlange in einem anderen Stil (z.B. Form, Farbe)
+- Stelle die Richtung der Schlange visuelle dar
 - Füge mehrere Früchte hinzu
-- Füge verschiedene Arten von Früchten hinzu
-  - Jede art soll eine eigene Farbe und einen eigenen Punkte Wert haben
+- Füge verschiedene Arten von Früchten hinzu (verschiedene Farben, Punktwerte)

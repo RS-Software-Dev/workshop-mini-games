@@ -126,8 +126,3 @@ function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
         }
     })
 }
-
-
-
-
-

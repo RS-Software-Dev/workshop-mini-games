@@ -5,30 +5,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Workshop Tag 2: Snake</title>
 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="lib/style.css">
     <style>
-        .controls {
-            margin: 16px;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            gap: 8px
+        .game-over {
+            color: red;
+            font-size: 48px;
+        }
+
+        .score {
+            font-size: 24px;
+        }
+
+        canvas {
+            --snake-color: lime;
+            --fruit-color: orange;
         }
     </style>
 
-    <script src="lib/MiniGeometry.js"></script>
+    <script src="lib/MiniGrid.js"></script>
     <script src="lib/MiniGame.js"></script>
+    <script src="lib/SnakeHelper.js"></script>
 
     <script src="main.js"></script>
 </head>
 <body>
     <h1>Snake</h1>
-    <canvas id="main">
 
-    </canvas>
+    <div id="main" class="container">
+        <canvas>
+        </canvas>
+        <div class="overlay">
+
+        </div>
+    </div>
+
     <script>
         const game = makeSnakeGame({
-            canvas: document.querySelector("#main"),
+            canvas: document.querySelector("#main canvas"),
+            overlay: document.querySelector("#main .overlay"),
             cols: 40,
             rows: 30,
             size: 16
@@ -36,26 +50,9 @@
 
         game.run(200)
 
-         // Input handling
+         // Reagiert auf Tasten die gedrückt werden.
         document.addEventListener('keydown', (e) => {
-            switch (e.key.toLowerCase()) {
-                case 'w':
-                case 'arrowup':
-                    game.handle(DIR_UP)
-                    break
-                case 's':
-                case 'arrowdown':
-                    game.handle(DIR_DOWN)
-                    break
-                case 'a':
-                case 'arrowleft':
-                    game.update(DIR_LEFT)
-                    break
-                case 'd':
-                case 'arrowright':
-                    game.update(DIR_RIGHT)
-                    break
-            }
+            console.log(e)
         })
     </script>
     <div class="controls">
