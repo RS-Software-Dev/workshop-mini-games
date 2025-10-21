@@ -40,7 +40,10 @@ class MiniGame {
                 let lastTime = t0
                 let tick = (time) => {
                     const timePassed = time - lastTime
-                    this.handle("tick", timePassed)
+                    
+                    if (timePassed < 200)
+                        this.handle("tick", timePassed)
+
                     lastTime = time
                 }
 

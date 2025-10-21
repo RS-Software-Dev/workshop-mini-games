@@ -1,77 +1,138 @@
-function makeBrickBreakGame({ canvas, rows, cols, size }) {
+function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
     canvas.width = cols * size
     canvas.height = rows * size
 
+
+    function makeRandomBall() {
+        const speed = size * 16
+        return {
+            x: cols * size / 2,
+            y: rows * size * 3 / 4,
+            r: size / 2,
+            dx: speed * (Math.random() <= 0.5 ? -1 : +1),
+            dy: speed,
+        }
+    }
+    function makeRandomBlockRow(row) {
+        return grid.listCols().map(col => makeRandomBlock(row, col))
+    }
+
+    function makeRandomBlocks() {
+        return listUpTo(rows / 2).flatMap(makeRandomBlockRow)
+    }
+
+    function makeRandomState() {
+        return {
+            isGameOver: false,
+            score: { hits: 0, sum: 0 },
+            blocks: makeRandomBlocks(),
+            ball: makeRandomBall(),
+            paddle: {
+                pos: cols / 2 * size,
+                dir: null
+            }
+        }
+    }
+
+
     const context = canvas.getContext("2d")
+    const grid = makeGrid(rows, cols)
 
     // Änderte die Füllfarbe zu der Style Eigenschaft mit dem angegebenen Namen.
     function setFillStyle(name) {
         context.fillStyle = getComputedStyle(canvas).getPropertyValue(name)
     }
 
-    // Zeichnet den Ball
-    function renderBall({ x, y, r }) {
-        setFillStyle('--ball-color')
+    function fillRect({ x, y, w, h }) {
+        context.fillRect(x, y, w, h)
+    }
 
+    function fillCircle({ x, y, r }) {
         context.beginPath()
         context.arc(x, y, r, 0, Math.PI * 2)
-        context.fill()
         context.closePath()
+        context.fill()
+    }
+
+    // Erstellt die Form des Schlägers.
+    function makePaddleRect(pos) {
+        const w = size * 8
+        const h = size
+
+        const x = pos - w / 2
+        const y = (rows - 4) * size
+
+
+        return makeRect(x, y, w, h)
+    }
+
+    function makeBlockRect({ row, col }) {
+        return makeRect(col * size, row * size, size, size)
     }
 
     // Zeichnet einen Block
-    function renderBlock({ row, col }) {
-        const x = col * size - 1
-        const y = row * size - 1
-        const s = size - 2
-        const r = size / 8
+    function fillBlock({ row, col }) {
+        const x = col * size
+        const y = row * size
+        const s = size
 
-        context.beginPath()
-        context.roundRect(x, y, s, s, r)
-        context.closePath()
+        fillRect({ x, y, w: s, h: s })
+    }
 
-        context.fill()
+    // Zeichnet den Ball
+    function renderBall(ball) {
+        setFillStyle('--ball-color')
+        fillCircle(ball)
     }
 
     // Zeichnet alle Blöcke
     function renderBlocks(blocks) {
-        setFillStyle('--block-color')
-
-        for (const row of blocks) {
-            for (const block of row) {
-                renderBlock(block)
-            }
+        for (const block of blocks) {
+            setFillStyle(`--block-color-${block.val}`)
+            fillBlock(block)
         }
     }
 
     // Zeichnet den Schläger
-    function renderPaddle({ x, y }) {
+    function renderPaddle({ pos }) {
         setFillStyle('--paddle-color')
-        context.fillRect(x - 4 * size, y - size / 2, size * 8, size)
+        fillRect(makePaddleRect(pos))
     }
 
-
-    function updateBall(ball, time) {
-        ball.x = Math.round(ball.x + time * ball.dx)
-        ball.y = Math.round(ball.y + time * ball.dy)
+    function renderScore({hits, sum}, isGameOver) {
+        overlay.innerHTML = `
+        <div class="score">
+            <span>Hits: ${hits}</span>
+            ${isGameOver ? '<span class="game-over">Game Over</span>' : ''}
+            <span>Sum: ${sum}</span>
+        </div>
+        `
     }
 
-    function checkWallCollision(ball) {
+    
+
+  
+    function checkWallCollisionSide(ball) {
         if (ball.x - ball.r < 0) {
+            ball.x = ball.r
             return DIR_LEFT
         }
         else if (canvas.width < ball.x + ball.r) {
+            ball.x = canvas.width - ball.r
             return DIR_RIGHT
         }
         else if (ball.y - ball.r < 0) {
+            ball.y = ball.r
             return DIR_UP
         }
         else if (canvas.height < ball.y + ball.r) {
+            ball.y = canvas.height - ball.r
             return DIR_DOWN
         }
     }
 
-    function updateBallCollision(ball, dir) {
+    // Verändert die Bewergungsrichtung des Balls.
+    function bounce(ball, dir) {
         switch (dir) {
             case DIR_DOWN:
             case DIR_UP:
@@ -84,93 +145,112 @@ function makeBrickBreakGame({ canvas, rows, cols, size }) {
         }
     }
 
-    function updateWallCollision(ball) {
-        const dir = checkWallCollision(ball)
+    //
+    function bounceFromWall(ball) {
+        const dir = checkWallCollisionSide(ball)
 
         if (isDir(dir)) {
-            updateBallCollision(ball, dir)
+            bounce(ball, dir)
+            return dir == DIR_DOWN
         }
     }
 
-    function makeBlockRow(row) {
-        return new Array(cols).fill(null).map((_, index) => makePos(row, index))
-    }
-
-
-    function updateBlocks(blocks, ball) {
-        return blocks.map((row) => row.filter((block) => {
-            const dir = checkBlockCollision(block, ball, size)
-            if (isDir(dir)) {
-                updateBallCollision(ball, dir)
-                return false
-            }
-            else {
-                return true
-            }
-        }))
-    }
-
-    function updatePaddleCollision(paddle, ball) {
-        const dir = checkPaddleCollision(paddle, ball, size)
+    // 
+    function bounceFromPaddle(ball, {pos}) {
+        const rect = makePaddleRect(pos)
+        const dir = checkBallCollisionSide(ball, rect)
         if (isDir(dir)) {
-            updateBallCollision(ball, dir)
+            bounce(ball, dir)
         }
     }
 
-    function updatePaddle(paddle, time) {
-        const speed = 500
-        paddle.x += paddle.d * time * speed
+    function bounceFromBlock(ball, block, score) {
+        const rect = makeBlockRect(block)
+        const dir = checkBallCollisionSide(ball, rect)
+
+        if (isDir(dir)) {
+            score.hits += 1
+            score.sum += block.val
+
+            block.val -= 1
+            bounce(ball, dir)
+        }
+    }
+
+    function bounceFromBlocks(ball, blocks, score) {
+        for(const block of blocks) {
+            bounceFromBlock(ball, block, score)
+        }
+
+        return blocks.filter((block) => 0 <= block.val)
+    }
+
+
+    function paddleSpeed(dir) {
+        const baseSpeed = size * 16
+
+        switch (dir) {
+            case DIR_LEFT:
+                return -baseSpeed
+            case DIR_RIGHT:
+                return +baseSpeed
+            default:
+                return 0
+        }
+    }
+
+    function moveBall(ball, sec) {
+        ball.x = Math.round(ball.x + ball.dx * sec)
+        ball.y = Math.round(ball.y + ball.dy * sec)
+
+        return ball
+    }
+
+    function movePaddle({ pos, dir }, sec) {
+        return {
+            pos: pos + paddleSpeed(dir) * sec,
+            dir
+        }
     }
 
 
     function updateTick(state, timePassed) {
+        if(state.isGameOver)
+            return state
+
         const sec = timePassed / 1000.0
-        updateBall(state.ball, sec)
-        updatePaddle(state.paddle, sec)
-        state.blocks = updateBlocks(state.blocks, state.ball)
-        updateWallCollision(state.ball)
-        updatePaddleCollision(state.paddle, state.ball)
+
+        state.ball = moveBall(state.ball, sec)
+        state.paddle = movePaddle(state.paddle, sec)
+        bounceFromPaddle(state.ball, state.paddle)
+
+        state.blocks = bounceFromBlocks(state.ball, state.blocks, state.score)
+        state.isGameOver = bounceFromWall(state.ball)
         return state
     }
 
     function updateMove(state, dir) {
-        state.paddle.d = dir == DIR_LEFT ? -1 : dir == DIR_RIGHT ? 1 : 0
+        state.paddle.dir = dir
         return state
     }
 
     return new MiniGame({
-        state: {
-            blocks: [
-                makeBlockRow(0),
-                makeBlockRow(2),
-                makeBlockRow(3),
-                makeBlockRow(5)
-            ],
-            ball: {
-                x: cols / 2 * size,
-                y: rows / 2 * size,
-                r: size / 2,
-                dx: size * cols / 2,
-                dy: size * rows / 2
-            },
-            paddle: {
-                x: cols / 2 * size,
-                y: (rows - 2) * size,
-                d: 0
-            }
-        },
+        state: makeRandomState(),
         render: (state) => {
             context.reset()
             renderBall(state.ball)
             renderBlocks(state.blocks)
             renderPaddle(state.paddle)
+            renderScore(state.score, state.isGameOver)
         },
         update: (state, { type, args }) => {
-            switch(type) {
+            switch (type) {
                 case "tick":
                     return updateTick(state, args)
                 case "move":
                     return updateMove(state, args)
+                case "reset":
+                    return makeRandomState()
                 default:
                     console.log("Unbekannte Eingabe: ", type)
                     return state

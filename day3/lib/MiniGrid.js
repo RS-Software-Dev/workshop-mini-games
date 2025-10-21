@@ -61,6 +61,10 @@ function isSamePos(a, b) {
     return a.row == b.row && a.col == b.col
 }
 
+function listUpTo(num) {
+    return new Array(num).fill(null).map((_, i) => i)
+}
+
 // Erstellt ein Hilfsobjekt für ein Gitter.
 function makeGrid(rows, cols) {
     return {
@@ -77,6 +81,9 @@ function makeGrid(rows, cols) {
         keepInBounds: ({ row, col }) => makePos(
             row < 0 ? row + rows : row % rows, 
             col < 0 ? col + cols : col % cols
-        )
+        ),
+
+        listRows: () => listUpTo(rows),
+        listCols: () => listUpTo(cols)
     }
 }
