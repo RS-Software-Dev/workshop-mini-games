@@ -134,3 +134,18 @@ Live Coding
 - Stelle die Richtung der Schlange visuelle dar
 - Füge mehrere Früchte hinzu
 - Füge verschiedene Arten von Früchten hinzu (verschiedene Farben, Punktwerte)
+
+---
+layout: center
+---
+
+# Abschluss
+
+---
+layout: center
+---
+
+# Nächstes Mal
+
+## Brick Break
+Am Do. 23.10. um 15:30

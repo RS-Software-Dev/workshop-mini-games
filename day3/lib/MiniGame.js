@@ -39,7 +39,8 @@ class MiniGame {
             requestAnimationFrame((t0) => {
                 let lastTime = t0
                 let tick = (time) => {
-                    this.handle({ type: "tick", timePassed: time - lastTime})
+                    const timePassed = time - lastTime
+                    this.handle("tick", timePassed)
                     lastTime = time
                 }
 
@@ -53,8 +54,8 @@ class MiniGame {
         }
     }
 
-    handle(input) {
-        this.update(input)
+    handle(type, args = {}) {
+        this.update({ type, args})
         this.render()
     }
 }

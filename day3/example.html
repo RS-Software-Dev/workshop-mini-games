@@ -7,8 +7,17 @@
     <link rel="stylesheet" href="lib/style.css">
     <script src="lib/MiniGame.js"></script>
     <script src="lib/MiniGeometry.js"></script>
+    <script src="lib/BrickBreakHelper.js"></script>
 
     <script src="example.js"></script>
+
+    <style>
+        canvas {
+            --ball-color: red;
+            --block-color: orange;
+            --paddle-color: lime;
+        }
+    </style>
 </head>
 <body>
     <h1>Brick Break</h1>
@@ -42,11 +51,10 @@
             const leftPressed = keys['arrowleft'] || keys['a']
             const rightPressed = keys['arrowright'] || keys['d']
 
-            game.handle({
-                type: "move",
-                dir: (leftPressed && !rightPressed) ? DIR_LEFT : 
+            const dir = (leftPressed && !rightPressed) ? DIR_LEFT : 
                     (rightPressed && !leftPressed) ? DIR_RIGHT : 0
-            })
+
+            game.handle("move", dir)
         }
     </script>
 </body>

@@ -4,18 +4,52 @@ function makeBrickBreakGame({ canvas, rows, cols, size }) {
 
     const context = canvas.getContext("2d")
 
-    function fillTile({ row, col }) {
-        context.fillRect(col * size, row * size, size, size)
+    // Änderte die Füllfarbe zu der Style Eigenschaft mit dem angegebenen Namen.
+    function setFillStyle(name) {
+        context.fillStyle = getComputedStyle(canvas).getPropertyValue(name)
     }
 
+    // Zeichnet den Ball
     function renderBall({ x, y, r }) {
-        context.fillStyle = "red"
+        setFillStyle('--ball-color')
 
         context.beginPath()
         context.arc(x, y, r, 0, Math.PI * 2)
         context.fill()
         context.closePath()
     }
+
+    // Zeichnet einen Block
+    function renderBlock({ row, col }) {
+        const x = col * size - 1
+        const y = row * size - 1
+        const s = size - 2
+        const r = size / 8
+
+        context.beginPath()
+        context.roundRect(x, y, s, s, r)
+        context.closePath()
+
+        context.fill()
+    }
+
+    // Zeichnet alle Blöcke
+    function renderBlocks(blocks) {
+        setFillStyle('--block-color')
+
+        for (const row of blocks) {
+            for (const block of row) {
+                renderBlock(block)
+            }
+        }
+    }
+
+    // Zeichnet den Schläger
+    function renderPaddle({ x, y }) {
+        setFillStyle('--paddle-color')
+        context.fillRect(x - 4 * size, y - size / 2, size * 8, size)
+    }
+
 
     function updateBall(ball, time) {
         ball.x = Math.round(ball.x + time * ball.dx)
@@ -62,77 +96,10 @@ function makeBrickBreakGame({ canvas, rows, cols, size }) {
         return new Array(cols).fill(null).map((_, index) => makePos(row, index))
     }
 
-    function renderBlocks(blocks) {
-        context.fillStyle = "red"
-
-        for (const row of blocks) {
-            for (const block of row) {
-                fillTile(block)
-            }
-        }
-    }
-
-    /*
-    function checkBlockCollision({ row, col }, ball) {
-        const minX = col * size
-        const minY = row * size
-
-        const maxX = minX + size
-        const maxY = minY + size
-
-        const insideX = (n) => (minX <= n) && (n <= maxX)
-        const insideY = (n) => (minY <= n) && (n <= maxY)
-
-        if (insideX(ball.x - ball.r)) {
-            return DIR_LEFT
-        }
-        else if (insideX(ball.x + ball.r)) {
-            return DIR_RIGHT
-        }
-        else if (insideY(ball.y - ball.r)) {
-            return DIR_UP
-        }
-        else if (insideY(ball.y + ball.r)) {
-            return DIR_DOWN
-        }
-    }*/
-
-    function checkBlockCollision(block, ball) {
-        const { row, col } = block
-        const minX = col * size
-        const minY = row * size
-        const maxX = minX + size
-        const maxY = minY + size
-
-        // 1️⃣ Check if the ball actually overlaps the block
-        if (
-            ball.x + ball.r < minX || // too far left
-            ball.x - ball.r > maxX || // too far right
-            ball.y + ball.r < minY || // too far above
-            ball.y - ball.r > maxY    // too far below
-        ) {
-            return null // no collision
-        }
-
-        // 2️⃣ Determine which side the collision happened on
-        const overlapLeft = ball.x + ball.r - minX
-        const overlapRight = maxX - (ball.x - ball.r)
-        const overlapTop = ball.y + ball.r - minY
-        const overlapBottom = maxY - (ball.y - ball.r)
-
-        // Find the smallest overlap → that’s the collision side
-        const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom)
-
-        if (minOverlap === overlapLeft) return DIR_LEFT
-        if (minOverlap === overlapRight) return DIR_RIGHT
-        if (minOverlap === overlapTop) return DIR_UP
-        if (minOverlap === overlapBottom) return DIR_DOWN
-    }
-
 
     function updateBlocks(blocks, ball) {
         return blocks.map((row) => row.filter((block) => {
-            const dir = checkBlockCollision(block, ball)
+            const dir = checkBlockCollision(block, ball, size)
             if (isDir(dir)) {
                 updateBallCollision(ball, dir)
                 return false
@@ -143,45 +110,9 @@ function makeBrickBreakGame({ canvas, rows, cols, size }) {
         }))
     }
 
-    function renderPaddle({ x, y }) {
-        context.fillStyle = "lime"
-        context.fillRect(x - 4 * size, y - size / 2, size * 8, size)
-    }
-
-    function checkPaddleCollision(paddle, ball) {
-        const minX = paddle.x - 4 * size
-        const minY = paddle.y - size / 2
-        const maxX = minX + 8 * size
-        const maxY = minY + size
-
-        // 1️⃣ Check if the ball actually overlaps the block
-        if (
-            ball.x + ball.r < minX || // too far left
-            ball.x - ball.r > maxX || // too far right
-            ball.y + ball.r < minY || // too far above
-            ball.y - ball.r > maxY    // too far below
-        ) {
-            return null // no collision
-        }
-
-        // 2️⃣ Determine which side the collision happened on
-        const overlapLeft = ball.x + ball.r - minX
-        const overlapRight = maxX - (ball.x - ball.r)
-        const overlapTop = ball.y + ball.r - minY
-        const overlapBottom = maxY - (ball.y - ball.r)
-
-        // Find the smallest overlap → that’s the collision side
-        const minOverlap = Math.min(overlapLeft, overlapRight, overlapTop, overlapBottom)
-
-        if (minOverlap === overlapLeft) return DIR_LEFT
-        if (minOverlap === overlapRight) return DIR_RIGHT
-        if (minOverlap === overlapTop) return DIR_UP
-        if (minOverlap === overlapBottom) return DIR_DOWN
-    }
-
     function updatePaddleCollision(paddle, ball) {
-        const dir = checkPaddleCollision(paddle, ball)
-        if(isDir(dir)) {
+        const dir = checkPaddleCollision(paddle, ball, size)
+        if (isDir(dir)) {
             updateBallCollision(ball, dir)
         }
     }
@@ -189,6 +120,22 @@ function makeBrickBreakGame({ canvas, rows, cols, size }) {
     function updatePaddle(paddle, time) {
         const speed = 500
         paddle.x += paddle.d * time * speed
+    }
+
+
+    function updateTick(state, timePassed) {
+        const sec = timePassed / 1000.0
+        updateBall(state.ball, sec)
+        updatePaddle(state.paddle, sec)
+        state.blocks = updateBlocks(state.blocks, state.ball)
+        updateWallCollision(state.ball)
+        updatePaddleCollision(state.paddle, state.ball)
+        return state
+    }
+
+    function updateMove(state, dir) {
+        state.paddle.d = dir == DIR_LEFT ? -1 : dir == DIR_RIGHT ? 1 : 0
+        return state
     }
 
     return new MiniGame({
@@ -218,22 +165,16 @@ function makeBrickBreakGame({ canvas, rows, cols, size }) {
             renderBlocks(state.blocks)
             renderPaddle(state.paddle)
         },
-        update: (state, input) => {
-
-            if (input.type == "tick") {
-                const sec = input.timePassed / 1000.0
-                updateBall(state.ball, sec)
-                updatePaddle(state.paddle, sec)
-                state.blocks = updateBlocks(state.blocks, state.ball)
-                updateWallCollision(state.ball)
-                updatePaddleCollision(state.paddle, state.ball)
+        update: (state, { type, args }) => {
+            switch(type) {
+                case "tick":
+                    return updateTick(state, args)
+                case "move":
+                    return updateMove(state, args)
+                default:
+                    console.log("Unbekannte Eingabe: ", type)
+                    return state
             }
-            else if (input.type = "move") {
-                state.paddle.d = input.dir == DIR_LEFT ? -1 : 
-                    input.dir == DIR_RIGHT ? 1 : 0
-            }
-
-            return state
         }
     })
 }
