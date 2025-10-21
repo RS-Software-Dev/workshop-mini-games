@@ -38,13 +38,110 @@ table {
 | **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**                                                                            |
 
 ---
+
+# Letztes Mal: Snake
+- Mehrere Arten von Änderung
+  - Zeitschritt
+  - Bewegungsrichtung
+  - Zurücksetzten
+
+
+---
+layout: two-cols
+---
+
+# Dieses Mal: <a href="./example.html">Brick Break</a>
+<v-clicks>
+
+- Zustände:
+  - Ball
+  - Blöcke
+  - Schläger
+- Zeichnen:
+  - Game Over
+  - Ball
+  - Blöcke
+  - Schläger
+- Verändern:
+  - Zeit schreitet voran
+  - Bewegunsrichtung ändern
+  - Spiel zurücksetzten
+
+</v-clicks>
+
+::right::
+
+<v-clicks>
+
+```js
+new MiniGame({
+  state: {
+    isGameOver: false,
+    ball: {
+        // ...
+    }
+    blocks: [
+        // ...
+    ]
+    paddle: {
+        // ...
+    }
+  },
+  render: (state) => {
+    // ...
+  },
+  update: (state, { type, args }) => {
+    switch (type) {
+      case "move":
+        return updateMove(state, args)
+      case "tick":
+        return updateTick(state, args)
+      case "reset":
+        return makeRandomState()
+    }
+  }
+})
+```
+
+</v-clicks>
+
+---
+
+# Unser <a href="https://github.com/RS-Software-Dev/workshop-retro-games/releases/latest">Starter Kit</a>
+
+- `lib/`
+  - `MiniGame.js`
+  - `MiniGrid.js` 
+  - `BrickBreakHelper.js` 
+- `index.html`
+- `main.js`
+
+
+
+---
 layout: center
 ---
 
-# 5min Pause
+Live Coding
+
+
+---
+
+# Bonusaufgaben
+- Power Ups einfügen:
+  - Mehr Bälle
+- Dynamische Richtungsänderung
+- Geschwindigkeit anpassen
 
 ---
 layout: center
 ---
 
-# 10min Pause
+# Abschluss
+
+---
+layout: center
+---
+
+# Vielen Dank
+## Noch Fragen?
