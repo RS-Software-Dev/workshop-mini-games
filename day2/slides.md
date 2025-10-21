@@ -40,13 +40,57 @@ table {
 
 
 ---
+layout: two-cols
+---
 
 # Letztes Mal: Game of Life
+- HTML Grundstruktur
 - Zeichnen mit `<canvas>`
-- Aufbau der Game Loop:
+- Aufbau eines `MiniGame`:
   - `state`: Aktueller Zustand
   - `render`: Zeichnet Zustand
   - `update`: Berechnet Zustand
+
+::right::
+
+<v-clicks>
+
+```html
+<canvas id="main"></canvas>
+<script>
+  const game = makeGameOfLife({
+    canvas: document.querySelector('#main'),
+    rows: 30,
+    cols: 40,
+    size: 16
+  })
+</script>
+```
+
+```js
+function makeGameOfLife({ canvas, rows, cols, size }) {
+    canvas.width = cols * size
+    canvas.height = rows * size
+
+    const context = canvas.getContext("2d")
+}
+```
+
+```js
+return new MiniGame({
+  state: makeRandomGrid(),
+  render: renderGrid,
+  update: updateGrid
+})
+```
+
+```js
+game.run()
+```
+
+</v-clicks>
+
+
 
 ---
 layout: two-cols
@@ -122,7 +166,7 @@ new MiniGame({
 layout: center
 ---
 
-Live Coding
+# Live Coding
 
 
 
@@ -130,6 +174,7 @@ Live Coding
 ---
 
 # Bonusaufgaben
+
 - Zeichne den Kopf der Schlange in einem anderen Stil (z.B. Form, Farbe)
 - Stelle die Richtung der Schlange visuelle dar
 - Füge mehrere Früchte hinzu
