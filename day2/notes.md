@@ -2,3 +2,8 @@
 
 - Schriftgröße im Editor hochstellen
 
+
+## Spielfeld & Setup
+
+## Schlange zeichnen
+

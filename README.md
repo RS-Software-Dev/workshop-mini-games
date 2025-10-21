@@ -31,6 +31,10 @@ Der Workshop richtet sich an Einsteiger und setzt keine Programmiererfahrung vor
 
 ## Tag 2: Snake
 
+- [Beispiel](https://gh.rs-software.dev/day2/example.html)
+- [Folien](https://gh.rs-software.dev/day2/)
+- [Starter Kit](https://github.com/RS-Software-Dev/workshop-retro-games/releases/latest)
+
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
 | ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **15:30 – 15:50** | 20 min | **Begrüßung & Recap**<br>– Kurzer Rückblick auf Tag 1 (Game of Life)<br>– Ziel des Tages: „Snake“ verstehen und umsetzen<br>– Aufbau des Starter-Projekts zeigen     |
@@ -47,6 +51,10 @@ Der Workshop richtet sich an Einsteiger und setzt keine Programmiererfahrung vor
 
 
 ## Tag 3: Brick Break
+
+- [Beispiel](https://gh.rs-software.dev/day3/example.html)
+- [Folien](https://gh.rs-software.dev/day3/)
+- [Starter Kit](https://github.com/RS-Software-Dev/workshop-retro-games/releases/latest)
 
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                    |
 | ----------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |

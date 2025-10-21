@@ -53,3 +53,21 @@ function addDir(a, b) {
 function isSamePos(a, b) {
     return a.row == b.row && a.col == b.col
 }
+
+
+function makeGrid(rows, cols) {
+    return {
+        rows,
+        cols,
+
+        makeRandomPos: () => makePos(
+            Math.floor(Math.random() * rows), 
+            Math.floor(Math.random() * cols)
+        ),
+
+        keepInBounds: ({ row, col }) => makePos(
+            row < 0 ? row + rows : row % rows, 
+            col < 0 ? col + cols : col % cols
+        )
+    }
+}

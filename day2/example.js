@@ -1,57 +1,3 @@
-// Wechselt die Bewegungsrichtung der Schlange.
-function updateSnakeDirection(snake, dir) {
-    if (snake.oldDirection != -dir) {
-        return {
-            segments: snake.segments,
-            oldDirection: snake.oldDirection,
-            newDirection: dir
-        }
-    }
-    else {
-        return snake
-    }
-}
-
-// Überprüft ob die Schlange sich überschneidet.
-function checkSnakeCollision({ segments }) {
-    const [head, ...rest] = segments
-    return rest.some((seg) => isSamePos(head, seg))
-}
-
-// Überprüft ob das Spiel vorbei ist.
-function updateGameOver(state) {
-    state.isGameOver = checkSnakeCollision(state.snake)
-}
-
-// Überprüft ob die Schlange die Frucht berührt.
-function checkFruitCollision({ snake, fruit }) {
-    return snake.segments.some((seg) => isSamePos(seg, fruit))
-}
-
-// Erweitert die Schlange um ein Segment in Bewegungsrichtung.
-function growSnake(snake) {
-    const newHead = addDir(snake.segments[0], snake.newDirection)
-
-    return {
-        segments: [newHead, ...snake.segments],
-        oldDirection: snake.newDirection,
-        newDirection: snake.newDirection
-    }
-}
-
-// Entfernt das letzte Segment der Schlange.
-function shrinkSnake({ segments }) {
-    segments.pop()
-}
-
-// Erstelle eine neue Schlange
-function makeSnake(head, dir) {
-    return {
-        segments: [head],
-        oldDirection: dir,
-        newDirection: dir
-    }
-}
 
 function gameOverTemplate({score}) {
     return `
@@ -65,11 +11,14 @@ function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
     canvas.height = rows * size
 
     const context = canvas.getContext("2d")
+    const grid = makeGrid(rows, cols)
 
+    // Füllt das Feld mit einem Rechteck.
     function fillTile({ row, col }) {
         context.fillRect(col * size, row * size, size, size)
     }
 
+    // Füllt das Feld mit einem Kreis.
     function fillCircle({row, col}) {
         const r = size / 2
         const x = col * size + r
@@ -82,56 +31,54 @@ function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
         context.fill()
     }
 
-    function getStyle(name) {
-        return getComputedStyle(canvas).getPropertyValue(name)
+    // Änderte die Füllfarbe zu der Style Eigenschaft mit dem angegebenen Namen.
+    function setFillStyle(name) {
+        context.fillStyle = getComputedStyle(canvas).getPropertyValue(name)
     }
 
+    // Erstellt einen zufälligen Zustand.
+    function makeRandomState() {
+        return {
+            isGameOver: false,
+            fruit: grid.makeRandomPos(),
+            snake: {
+                segments: [grid.makeRandomPos()],
+                oldDirection: DIR_UP,
+                newDirection: DIR_UP
+            }
+        }
+    }
 
+    // Zeichnet die Schlange
     function renderSnake({ segments }) {
-        context.fillStyle = getStyle('--snake-color')
+        setFillStyle('--snake-color')
         for (const seg of segments) {
             fillTile(seg)
         }
     }
 
+    // Zeichnet die Frucht.
     function renderFruit(fruit) {
-        context.fillStyle = getStyle('--fruit-color')
+        setFillStyle('--fruit-color')
         fillCircle(fruit)
     }
 
+    // Zeichnet den Game Over screen, wenn das Spiel vorbei ist.
     function renderStats(state) {
         overlay.innerHTML = state.isGameOver ?
             gameOverTemplate({ score: state.snake.segments.length }) :
             ''
     }
 
-
-    // Wählt eine zufällige Position innerhalb des Gitters
-    function makeRandomPos() {
-        return makePos(
-            Math.floor(Math.random() * rows), 
-            Math.floor(Math.random() * cols)
-        )
-    }
-
-    function makeRandomState() {
-        return {
-            isGameOver: false,
-            fruit: makeRandomPos(),
-            snake: makeSnake(makeRandomPos(), DIR_UP)
-        }
-    }
-
-    function keepInBounds({ row, col }) {
-        return makePos(row < 0 ? row + rows : row % rows, col < 0 ? col + cols : col % cols)
-    }
-
+    // Fügt ein neues Segment zur Schlange hinzu und achtet darauf, 
+    // dass das Gitter nicht verlassen wird.
     function growSnakeInBounds(snake) {
         const s = growSnake(snake)
-        s.segments = s.segments.map(keepInBounds)
+        s.segments = s.segments.map(grid.keepInBounds)
         return s
     }
 
+    // Berechnet den nächsten Zeitschritt.
     function updateTick(state) {
         if (state.isGameOver)
             return state
@@ -139,17 +86,23 @@ function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
         state.snake = growSnakeInBounds(state.snake)
 
         if (checkFruitCollision(state)) {
-            state.fruit = makeRandomPos()
+            state.fruit = grid.makeRandomPos()
         }
         else {
             shrinkSnake(state.snake)
         }
 
-        updateGameOver(state)
+        state.isGameOver = checkSnakeCollision(state.snake)
         return state
     }
 
+    // Ändert die Bewegungsrichtung der Schlange.
+    function updateMove(state, dir) {
+        state.snake = updateSnakeDirection(state.snake, dir)
+        return state
+    }
 
+    // Erstellt ein neues Spiel.
     return new MiniGame({
         state: makeRandomState(),
         render: (state) => {
@@ -161,14 +114,13 @@ function makeSnakeGame({ canvas, overlay, rows, cols, size }) {
         update: (state, { type, args }) => {
             switch (type) {
                 case "move":
-                    state.snake = updateSnakeDirection(state.snake, args)
-                    return state
+                    return updateMove(state, args)
                 case "tick":
                     return updateTick(state)
                 case "reset":
                     return makeRandomState()
                 default:
-                    console.log("Unbekannter input: ", type)
+                    console.log("Unbekannte Eingabe: ", type, args)
                     return state
             }
         }

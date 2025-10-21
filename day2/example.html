@@ -22,8 +22,9 @@
         }
     </style>
 
-    <script src="lib/MiniGeometry.js"></script>
+    <script src="lib/MiniGrid.js"></script>
     <script src="lib/MiniGame.js"></script>
+    <script src="lib/SnakeHelper.js"></script>
 
     <script src="example.js"></script>
 </head>
@@ -49,7 +50,7 @@
 
         game.run(200)
 
-         // Input handling
+         // Reagiert auf Tasten die gedrückt werden.
         document.addEventListener('keydown', (e) => {
             switch (e.key.toLowerCase()) {
                 case 'w':
