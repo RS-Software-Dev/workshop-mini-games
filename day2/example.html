@@ -7,12 +7,18 @@
 
     <link rel="stylesheet" href="style.css">
     <style>
-        .controls {
-            margin: 16px;
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            gap: 8px
+        .game-over {
+            color: red;
+            font-size: 48px;
+        }
+
+        .score {
+            font-size: 24px;
+        }
+
+        canvas {
+            --snake-color: lime;
+            --fruit-color: orange;
         }
     </style>
 
@@ -23,12 +29,19 @@
 </head>
 <body>
     <h1>Snake</h1>
-    <canvas id="main">
 
-    </canvas>
+    <div id="main" class="container">
+        <canvas>
+        </canvas>
+        <div class="overlay">
+
+        </div>
+    </div>
+
     <script>
         const game = makeSnakeGame({
-            canvas: document.querySelector("#main"),
+            canvas: document.querySelector("#main canvas"),
+            overlay: document.querySelector("#main .overlay"),
             cols: 40,
             rows: 30,
             size: 16
@@ -41,19 +54,19 @@
             switch (e.key.toLowerCase()) {
                 case 'w':
                 case 'arrowup':
-                    game.handle(DIR_UP)
+                    game.handle("move", DIR_UP)
                     break
                 case 's':
                 case 'arrowdown':
-                    game.handle(DIR_DOWN)
+                    game.handle("move", DIR_DOWN)
                     break
                 case 'a':
                 case 'arrowleft':
-                    game.update(DIR_LEFT)
+                    game.handle("move", DIR_LEFT)
                     break
                 case 'd':
                 case 'arrowright':
-                    game.update(DIR_RIGHT)
+                    game.handle("move", DIR_RIGHT)
                     break
             }
         })

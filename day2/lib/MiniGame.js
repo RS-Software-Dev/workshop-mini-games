@@ -34,8 +34,8 @@ class MiniGame {
         this.intervalId = setInterval(() => this.handle("tick"), interval)
     }
 
-    handle(input) {
-        this.update(input)
+    handle(type, args = {}) {
+        this.update({ type, args})
         this.render()
     }
 }
