@@ -34,10 +34,21 @@ jobs:
 
       - name: Copy examples
         run: |
+          # Examples Day 1
           cp -r day1/lib/ dist/day1/lib/
           cp day1/example.html dist/day1/example.html
           cp day1/example.js dist/day1/example.js
-        
+
+          # Examples Day 2
+          cp -r day2/lib/ dist/day2/lib/
+          cp day2/example.html dist/day2/example.html
+          cp day2/example.js dist/day2/example.js
+
+          # Examples Day 3
+          cp -r day3/lib/ dist/day3/lib/
+          cp day3/example.html dist/day3/example.html
+          cp day3/example.js dist/day3/example.js
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
