@@ -173,17 +173,6 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
     //////
 
     function updateTick(state, timePassed) {
-        if(state.isGameOver)
-            return state
-
-        const sec = timePassed / 1000.0
-
-        state.ball = moveBall(state.ball, sec)
-        state.paddle = movePaddle(state.paddle, sec)
-        bounceFromPaddle(state.ball, state.paddle)
-
-        state.blocks = bounceFromBlocks(state.ball, state.blocks, state.score)
-        state.isGameOver = bounceFromWall(state.ball)
         return state
     }
 
