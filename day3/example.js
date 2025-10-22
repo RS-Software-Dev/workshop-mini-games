@@ -109,9 +109,6 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         `
     }
 
-    
-
-  
     function checkWallCollisionSide(ball) {
         if (ball.x - ball.r < 0) {
             ball.x = ball.r
