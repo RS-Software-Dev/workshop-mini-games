@@ -50,7 +50,7 @@ function moveBall(ball, sec) {
     return ball
 }
 
-## Kollision mit der Wand
+## Kollision mit Wand
 16:20 - 16:35
 
 // Verändert die Bewergungsrichtung des Balls.

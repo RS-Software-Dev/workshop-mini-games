@@ -27,15 +27,15 @@ table {
 | ----------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **15:30 – 15:50** | 20 min | **Begrüßung & Rückblick**         |
 | **15:50 – 16:05** | 15 min | **Spielfeld zeichnen**                                                           |
-| **16:05 – 16:20** | 15 min | **Ballbewegung & Kollision mit Wänden**                                                            |
-| **16:20 – 16:35** | 15 min | **Paddle-Steuerung**                                                       |
-| **16:35 – 16:45** | 10 min | **Längere Pause**                                                                                                                                              |
-| **16:45 – 17:00** | 15 min | **Kollision mit Blöcken**                                                                                            |
-| **17:00 – 17:15** | 15 min | **Ballgeschwindigkeit & Richtungslogik**                                          |
-| **17:15 – 17:30** | 15 min | **Level & Styling**                                                                             |
-| **17:30 – 17:35** | 5 min  | **Kurze Pause**                                                                                                                                                |
+| **16:05 – 16:20** | 15 min | **Ball bewegen**                                                            |
+| **16:20 – 16:35** | 15 min | **Kollision mit Wand**                                                       |
+| **16:35 – 16:45** | 10 min | **Längere Pause**                                                      |
+| **16:45 – 17:00** | 15 min | **Schläger bewegen**         |
+| **17:00 – 17:15** | 15 min | **Kollision mit Schläger**                                          |
+| **17:15 – 17:30** | 15 min | **Kollision mit Blöcken**                                                  |
+| **17:30 – 17:35** | 5 min  | **Kurze Pause**       |
 | **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben** |
-| **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**                                                                            |
+| **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**                                       |
 
 ---
 
@@ -129,10 +129,10 @@ Live Coding
 ---
 
 # Bonusaufgaben
-- Power Ups einfügen:
-  - Mehr Bälle
-- Dynamische Richtungsänderung
-- Geschwindigkeit anpassen
+- Styling der Blöcke ändern
+- Mehrere Bälle einfügen
+- Schläger mit Maus bewegen
+- Soundeffekte bei Treffer
 
 ---
 layout: center

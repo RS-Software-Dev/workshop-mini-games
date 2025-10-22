@@ -37,17 +37,17 @@ Der Workshop richtet sich an Einsteiger und setzt keine Programmiererfahrung vor
 
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                        |
 | ----------------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **15:30 – 15:50** | 20 min | **Begrüßung & Recap**<br>– Kurzer Rückblick auf Tag 1 (Game of Life)<br>– Ziel des Tages: „Snake“ verstehen und umsetzen<br>– Aufbau des Starter-Projekts zeigen     |
-| **15:50 – 16:05** | 15 min | **Spielfeld & Setup**<br>– Canvas vorbereiten<br>– Gitter/Zellen zeichnen<br>– Schlange initial anzeigen                                                             |
-| **16:05 – 16:20** | 15 min | **Bewegung der Schlange**<br>– Richtung speichern (z. B. `dx`, `dy`)<br>– Bewegung mit `setInterval()` umsetzen                                                      |
-| **16:20 – 16:35** | 15 min | **Steuerung per Tastatur**<br>– `keydown`-Events abfangen<br>– Richtung ändern mit Pfeiltasten                                                                       |
-| **16:35 – 16:45** | 10 min | **Längere Pause**                                                                                                                                                  |
-| **16:45 – 17:00** | 15 min | **Futter einbauen**<br>– Zufällige Position generieren<br>– Essen zeichnen                                                                                           |
-| **17:00 – 17:15** | 15 min | **Wachstum & Punkte**<br>– Schlange verlängern bei Treffer<br>– Punktestand anzeigen                                                                                 |
-| **17:15 – 17:30** | 15 min | **Game Over-Logik**<br>– Kollision mit Wand oder Körper erkennen<br>– Neustart ermöglichen                                                                           |
-| **17:30 – 17:35** | 5 min  | **Kurze Pause**                                                                                                                                                    |
-| **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben **<br> Ideen für Fortgeschrittene:<br>– Farbverlauf für die Schlange<br>– Levelsystem oder Geschwindigkeit erhöhen<br>– Highscore-Anzeige |
-| **17:55 – 18:00** | 5 min  | **Abschluss & Ausblick**<br>– Kurzes Fazit<br>– Vorschau auf Tag 3 (*Brick Break*)                                                                                   |
+| **15:30 – 15:50** | 20 min | **Begrüßung & Rückblick**    |
+| **15:50 – 16:05** | 15 min | **Spielfeld zeichnen**                                             |
+| **16:05 – 16:20** | 15 min | **Schlange bewegen**                                                    |
+| **16:20 – 16:35** | 15 min | **Steuerung per Tastatur**                                                                    |
+| **16:35 – 16:45** | 10 min | **Längere Pause**           |
+| **16:45 – 17:00** | 15 min | **Frucht einsammeln**                                    |
+| **17:00 – 17:15** | 15 min | **Kollision mit Schlange**                     |
+| **17:15 – 17:30** | 15 min | **Game Over**                                                                          |
+| **17:30 – 17:35** | 5 min  | **Kurze Pause**                                  |
+| **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben** |
+| **17:55 – 18:00** | 5 min  | **Abschluss & Ausblick**   |    
 
 
 ## Tag 3: Brick Break
@@ -58,14 +58,14 @@ Der Workshop richtet sich an Einsteiger und setzt keine Programmiererfahrung vor
 
 | Zeit              | Dauer  | Programmpunkt                                                                                                                                                    |
 | ----------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **15:30 – 15:50** | 20 min | **Begrüßung & Recap**<br>– Kurzer Rückblick auf Tag 2 (Snake)<br>– Ziel des Tages: „Brick Break“ verstehen und umsetzen<br>– Starter-Projekt vorstellen          |
-| **15:50 – 16:05** | 15 min | **Canvas & Spielfeld**<br>– Canvas vorbereiten<br>– Paddle, Ball und Blöcke als Grundobjekte zeichnen                                                            |
-| **16:05 – 16:20** | 15 min | **Ballbewegung & Kollisionslogik**<br>– Ball bewegen (`dx`, `dy`)<br>– Kollision mit Wänden erkennen                                                             |
-| **16:20 – 16:35** | 15 min | **Paddle-Steuerung**<br>– Pfeiltasten oder Mausbewegung<br>– Paddle bewegen, Ball abprallen lassen                                                               |
-| **16:35 – 16:45** | 10 min | **Längere Pause**                                                                                                                                              |
-| **16:45 – 17:00** | 15 min | **Kollision mit Blöcken**<br>– Blöcke zerstören<br>– Punkte zählen                                                                                               |
-| **17:00 – 17:15** | 15 min | **Ballgeschwindigkeit & Richtungslogik**<br>– Geschwindigkeit anpassen<br>– Richtungsänderung bei Blocktreffer / Paddle                                          |
-| **17:15 – 17:30** | 15 min | **Level & Styling**<br>– Blöcke farbig gestalten<br>– Paddle/Ball Design verbessern                                                                              |
-| **17:30 – 17:35** | 5 min  | **Kurze Pause**                                                                                                                                                |
-| **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben**<br> Ideen für Fortgeschrittene:<br>– Verschiedene Blocktypen (härter, Spezialeffekte)<br>– Livesystem<br>– Highscore speichern |
-| **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**<br>– Feedbackrunde<br>– Tipps für eigene Mini-Spiele                                                                              |
+| **15:30 – 15:50** | 20 min | **Begrüßung & Rückblick**         |
+| **15:50 – 16:05** | 15 min | **Spielfeld zeichnen**                                                           |
+| **16:05 – 16:20** | 15 min | **Ball bewegen**                                                            |
+| **16:20 – 16:35** | 15 min | **Kollision mit Wand**                                                       |
+| **16:35 – 16:45** | 10 min | **Längere Pause**                                                      |
+| **16:45 – 17:00** | 15 min | **Schläger bewegen**         |
+| **17:00 – 17:15** | 15 min | **Kollision mit Schläger**                                          |
+| **17:15 – 17:30** | 15 min | **Kollision mit Blöcken**                                                  |
+| **17:30 – 17:35** | 5 min  | **Kurze Pause**       |
+| **17:35 – 17:55** | 20 min | **Freies Üben / Bonusaufgaben** |
+| **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**                                       |
