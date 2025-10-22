@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workshop Tag 3: Brick Break</title>
+    <link rel="stylesheet" href="lib/style.css">
+    <script src="lib/MiniGame.js"></script>
+    <script src="lib/MiniGrid.js"></script>
+    <script src="lib/BrickBreakHelper.js"></script>
+
+    <script src="example.js"></script>
+
+    <style>
+        canvas {
+            --ball-color: red;
+
+            --paddle-color: lime;
+
+            --block-color: orange;
+            --block-color-1: color-mix(in srgb, var(--block-color) 25%, transparent);
+            --block-color-2: color-mix(in srgb, var(--block-color) 50%, transparent);
+            --block-color-3: color-mix(in srgb, var(--block-color) 75%, transparent);
+            --block-color-4: color-mix(in srgb, var(--block-color) 100%, transparent);
+        }
+
+        .score {
+            font-size: 24px;
+            padding: 8px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Brick Break</h1>
+    <div id="main" class="container">
+        <canvas>
+        </canvas>
+        <div class="overlay">
+
+        </div>
+    </div>
+    <script>
+        const game = makeBrickBreakGame({
+            canvas: document.querySelector("#main canvas"),
+            overlay: document.querySelector("#main .overlay"),
+            rows: 30,
+            cols: 20,
+            size: 32
+        })
+
+        game.run({
+            interval: null
+        })
+
+        // Input handling
+        const keys = {}
+
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true
+            updatePaddleMove()
+        })
+
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false
+            updatePaddleMove()
+        })
+
+        function updatePaddleMove() {
+            const leftPressed = keys['arrowleft'] || keys['a']
+            const rightPressed = keys['arrowright'] || keys['d']
+
+            const dir = (leftPressed && !rightPressed) ? DIR_LEFT :
+                (rightPressed && !leftPressed) ? DIR_RIGHT : null
+
+            game.handle("move", dir)
+        }
+    </script>
+    <div class="controls">
+        <button onclick="game.handle('reset')">Reset</button>
+    </div>
+</body>
+
+</html>

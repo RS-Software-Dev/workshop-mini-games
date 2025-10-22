@@ -156,7 +156,8 @@ new MiniGame({
 - `lib/`
   - `MiniGame.js`
   - `MiniGrid.js` 
-  - `SnakeHelper.js` 
+  - `SnakeHelper.js`
+  - `style.css`
 - `index.html`
 - `main.js`
 

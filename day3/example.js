@@ -2,9 +2,17 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
     canvas.width = cols * size
     canvas.height = rows * size
 
+    const context = canvas.getContext("2d")
+    const grid = makeGrid(rows, cols)
+    const speed = size * 16
 
+
+    //////
+    // Zustand
+    //////
+
+    // Erstellt einen zufällifgen Ball.
     function makeRandomBall() {
-        const speed = size * 16
         return {
             x: cols * size / 2,
             y: rows * size * 3 / 4,
@@ -13,14 +21,18 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
             dy: speed,
         }
     }
+
+    // Erstellt eine Reihe von Blöcken.
     function makeRandomBlockRow(row) {
         return grid.listCols().map(col => makeRandomBlock(row, col))
     }
 
+    // Erstellt eine Liste von zufälligen Blöcken.
     function makeRandomBlocks() {
         return listUpTo(rows / 2).flatMap(makeRandomBlockRow)
     }
 
+    // Erstellt einen zufälligen Spielezustand.
     function makeRandomState() {
         return {
             isGameOver: false,
@@ -35,8 +47,9 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
     }
 
 
-    const context = canvas.getContext("2d")
-    const grid = makeGrid(rows, cols)
+    //////
+    // Zeichnen
+    //////
 
     // Änderte die Füllfarbe zu der Style Eigenschaft mit dem angegebenen Namen.
     function setFillStyle(name) {
@@ -55,7 +68,7 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
     }
 
     // Erstellt die Form des Schlägers.
-    function makePaddleRect(pos) {
+    function makePaddleRect({pos}) {
         const w = size * 8
         const h = size
 
@@ -66,39 +79,37 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         return makeRect(x, y, w, h)
     }
 
+    // Erstellt die Form eines Blockes.
     function makeBlockRect({ row, col }) {
         return makeRect(col * size, row * size, size, size)
     }
 
-    // Zeichnet einen Block
-    function fillBlock({ row, col }) {
-        const x = col * size
-        const y = row * size
-        const s = size
-
-        fillRect({ x, y, w: s, h: s })
-    }
-
-    // Zeichnet den Ball
+    // Zeichnet den Ball.
     function renderBall(ball) {
         setFillStyle('--ball-color')
         fillCircle(ball)
     }
 
-    // Zeichnet alle Blöcke
+    // Zeichnet einen Block
+    function renderBlock(block) {
+        setFillStyle(`--block-color-${block.val}`)
+        fillRect(makeBlockRect(block))
+    }
+
+    // Zeichnet alle Blöcke.
     function renderBlocks(blocks) {
         for (const block of blocks) {
-            setFillStyle(`--block-color-${block.val}`)
-            fillBlock(block)
+            renderBlock(block)
         }
     }
 
-    // Zeichnet den Schläger
-    function renderPaddle({ pos }) {
+    // Zeichnet den Schläger.
+    function renderPaddle(paddle) {
         setFillStyle('--paddle-color')
-        fillRect(makePaddleRect(pos))
+        fillRect(makePaddleRect(paddle))
     }
 
+    // Zeichnet die Punkte auf das Overlay.
     function renderScore({hits, sum}, isGameOver) {
         overlay.innerHTML = `
         ${isGameOver ? '<span class="game-over">Game Over</span>' : ''}
@@ -109,24 +120,10 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         `
     }
 
-    function checkWallCollisionSide(ball) {
-        if (ball.x - ball.r < 0) {
-            ball.x = ball.r
-            return DIR_LEFT
-        }
-        else if (canvas.width < ball.x + ball.r) {
-            ball.x = canvas.width - ball.r
-            return DIR_RIGHT
-        }
-        else if (ball.y - ball.r < 0) {
-            ball.y = ball.r
-            return DIR_UP
-        }
-        else if (canvas.height < ball.y + ball.r) {
-            ball.y = canvas.height - ball.r
-            return DIR_DOWN
-        }
-    }
+
+    //////
+    // Verändern
+    //////
 
     // Verändert die Bewergungsrichtung des Balls.
     function bounce(ball, dir) {
@@ -142,9 +139,9 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         }
     }
 
-    //
+    // Lässt den Ball von der Wand abprallen.
     function bounceFromWall(ball) {
-        const dir = checkWallCollisionSide(ball)
+        const dir = checkWallCollisionSide(ball, canvas)
 
         if (isDir(dir)) {
             bounce(ball, dir)
@@ -152,15 +149,16 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         }
     }
 
-    // 
-    function bounceFromPaddle(ball, {pos}) {
-        const rect = makePaddleRect(pos)
+    // Lässt den Ball vom Schläger abprallen.
+    function bounceFromPaddle(ball, paddle) {
+        const rect = makePaddleRect(paddle)
         const dir = checkBallCollisionSide(ball, rect)
         if (isDir(dir)) {
             bounce(ball, dir)
         }
     }
 
+    // Lässt den Ball von einem Block abprallen.
     function bounceFromBlock(ball, block, score) {
         const rect = makeBlockRect(block)
         const dir = checkBallCollisionSide(ball, rect)
@@ -174,6 +172,7 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         }
     }
 
+    // Lässt den Ball von allen Blöcken abprallen.
     function bounceFromBlocks(ball, blocks, score) {
         for(const block of blocks) {
             bounceFromBlock(ball, block, score)
@@ -182,20 +181,19 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         return blocks.filter((block) => 0 <= block.val)
     }
 
-
+    // Berechnet die Geschwindigkeit des Schlägers, basierend auf einer Richtung.
     function paddleSpeed(dir) {
-        const baseSpeed = size * 16
-
         switch (dir) {
             case DIR_LEFT:
-                return -baseSpeed
+                return -speed
             case DIR_RIGHT:
-                return +baseSpeed
+                return +speed
             default:
                 return 0
         }
     }
 
+    // Bewegt den Ball basierend auf der vergangenen Zeit.
     function moveBall(ball, sec) {
         ball.x = Math.round(ball.x + ball.dx * sec)
         ball.y = Math.round(ball.y + ball.dy * sec)
@@ -203,6 +201,7 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         return ball
     }
 
+    // Bewegt den Schläger basierend auf der vergangenen Zeit.
     function movePaddle({ pos, dir }, sec) {
         return {
             pos: pos + paddleSpeed(dir) * sec,
@@ -210,6 +209,10 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         }
     }
 
+
+    //////
+    // Komposition
+    //////
 
     function updateTick(state, timePassed) {
         if(state.isGameOver)

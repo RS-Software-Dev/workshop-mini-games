@@ -113,6 +113,7 @@ new MiniGame({
   - `MiniGame.js`
   - `MiniGrid.js` 
   - `BrickBreakHelper.js` 
+  - `style.css`
 - `index.html`
 - `main.js`
 

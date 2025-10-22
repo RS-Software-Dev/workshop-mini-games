@@ -60,3 +60,22 @@ function makeRandomBlock(row, col) {
 }
 
 
+// Überprüft ob der Ball eine der Wände berührt.
+function checkWallCollisionSide(ball, {width, height}) {
+    if (ball.x - ball.r < 0) {
+        ball.x = ball.r
+        return DIR_LEFT
+    }
+    else if (width < ball.x + ball.r) {
+        ball.x = width - ball.r
+        return DIR_RIGHT
+    }
+    else if (ball.y - ball.r < 0) {
+        ball.y = ball.r
+        return DIR_UP
+    }
+    else if (height < ball.y + ball.r) {
+        ball.y = height - ball.r
+        return DIR_DOWN
+    }
+}

@@ -6,8 +6,6 @@
 ## Spielfeld zeichnen
 15:50 - 16:05
 
-- `makeGrid` erklären
-
 // Zeichnet die Schlange
 function renderSnake({ segments }) {
     setFillStyle('--snake-color')
