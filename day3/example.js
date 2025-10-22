@@ -181,6 +181,14 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         return blocks.filter((block) => 0 <= block.val)
     }
 
+    // Bewegt den Ball basierend auf der vergangenen Zeit.
+    function moveBall(ball, sec) {
+        ball.x = Math.round(ball.x + ball.dx * sec)
+        ball.y = Math.round(ball.y + ball.dy * sec)
+
+        return ball
+    }
+
     // Berechnet die Geschwindigkeit des Schlägers, basierend auf einer Richtung.
     function paddleSpeed(dir) {
         switch (dir) {
@@ -191,14 +199,6 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
             default:
                 return 0
         }
-    }
-
-    // Bewegt den Ball basierend auf der vergangenen Zeit.
-    function moveBall(ball, sec) {
-        ball.x = Math.round(ball.x + ball.dx * sec)
-        ball.y = Math.round(ball.y + ball.dy * sec)
-
-        return ball
     }
 
     // Bewegt den Schläger basierend auf der vergangenen Zeit.
@@ -215,17 +215,6 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
     //////
 
     function updateTick(state, timePassed) {
-        if(state.isGameOver)
-            return state
-
-        const sec = timePassed / 1000.0
-
-        state.ball = moveBall(state.ball, sec)
-        state.paddle = movePaddle(state.paddle, sec)
-        bounceFromPaddle(state.ball, state.paddle)
-
-        state.blocks = bounceFromBlocks(state.ball, state.blocks, state.score)
-        state.isGameOver = bounceFromWall(state.ball)
         return state
     }
 
