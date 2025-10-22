@@ -38,12 +38,49 @@ table {
 | **17:55 – 18:00** | 5 min  | **Abschluss & Workshop-Fazit**                                       |
 
 ---
+layout: two-cols
+---
 
 # Letztes Mal: Snake
 - Mehrere Arten von Änderung
   - Zeitschritt
   - Bewegungsrichtung
   - Zurücksetzten
+- Extra Features:
+  - Multiplayer
+  - Game Over beim Verlassen des Feldes
+  - Gewinner wird angezeigt
+
+::right::
+
+```js
+new MiniGame({
+  state: {
+    isGameOver: false,
+    fruit: { row: 0, col: 0 },
+    snake: {
+      segments: [{ row: 1, col: 1 }],
+      oldDirection: DIR_UP,
+      newDirection: DIR_UP
+    }
+  },
+  render: (state) => {
+    renderSnake(state.snake)
+    renderFruit(state.fruit)
+    renderStats(state)
+  },
+  update: (state, { type, args }) => {
+    switch (type) {
+      case "move":
+        return updateMove(state, args)
+      case "tick":
+        return updateTick(state)
+      case "reset":
+        return makeRandomState()
+    }
+  }
+})
+```
 
 
 ---
@@ -76,7 +113,6 @@ layout: two-cols
 ```js
 new MiniGame({
   state: {
-    isGameOver: false,
     ball: {
         // ...
     }
