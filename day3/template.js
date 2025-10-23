@@ -75,7 +75,6 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         const x = pos - w / 2
         const y = (rows - 4) * size
 
-
         return makeRect(x, y, w, h)
     }
 
@@ -86,38 +85,26 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
 
     // Zeichnet den Ball.
     function renderBall(ball) {
-        setFillStyle('--ball-color')
-        fillCircle(ball)
     }
 
     // Zeichnet einen Block
     function renderBlock(block) {
-        setFillStyle(`--block-color-${block.val}`)
-        fillRect(makeBlockRect(block))
+        
     }
 
     // Zeichnet alle Blöcke.
     function renderBlocks(blocks) {
-        for (const block of blocks) {
-            renderBlock(block)
-        }
+        
     }
 
     // Zeichnet den Schläger.
     function renderPaddle(paddle) {
-        setFillStyle('--paddle-color')
-        fillRect(makePaddleRect(paddle))
+        
     }
 
     // Zeichnet die Punkte auf das Overlay.
     function renderScore({hits, sum}, isGameOver) {
-        overlay.innerHTML = `
-        ${isGameOver ? '<span class="game-over">Game Over</span>' : ''}
-        <div class="score">
-            <span>Hits: ${hits}</span>
-            <span>Sum: ${sum}</span>
-        </div>
-        `
+        
     }
 
 

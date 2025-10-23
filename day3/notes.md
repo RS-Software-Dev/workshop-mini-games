@@ -50,6 +50,14 @@ function moveBall(ball, sec) {
     return ball
 }
 
+function updateTick(state, timePassed) {
+    const sec = timePassed / 1000.0
+
+    state.ball = moveBall(state.ball, sec)
+
+    return state
+}
+
 ## Kollision mit Wand
 16:20 - 16:35
 
@@ -73,8 +81,15 @@ function bounceFromWall(ball) {
 
     if (isDir(dir)) {
         bounce(ball, dir)
-        return dir == DIR_DOWN
     }
+}
+
+function updateTick(state, timePassed) {
+    const sec = timePassed / 1000.0
+
+    state.ball = moveBall(state.ball, sec)
+    bounceFromWall(state.ball)
+    return state
 }
 
 ## 10 MIN PAUSE
@@ -101,6 +116,13 @@ function movePaddle({ pos, dir }, sec) {
         pos: pos + paddleSpeed(dir) * sec,
         dir
     }
+}
+
+function updateTick(state, timePassed) {
+    const sec = timePassed / 1000.0
+
+    state.ball = moveBall(state.ball, sec)
+    state.paddle = movePaddle(state.paddle, sec)
 }
 
 ## Kollision mit dem Schläger
