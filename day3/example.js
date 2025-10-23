@@ -22,6 +22,15 @@ function makeBrickBreakGame({ canvas, overlay, rows, cols, size }) {
         }
     }
 
+    // Erstellt einen zufälligen Block
+    function makeRandomBlock(row, col) {
+        return {
+            row,
+            col,
+            val: Math.floor(Math.random() * 4) + 1
+        }
+    }
+
     // Erstellt eine Reihe von Blöcken.
     function makeRandomBlockRow(row) {
         return grid.listCols().map(col => makeRandomBlock(row, col))
