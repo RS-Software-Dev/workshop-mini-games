@@ -27,7 +27,7 @@ class MiniGame {
         }
     }
 
-    run({interval }) {
+    run(interval = null) {
         this.stop()
         this.render()
 
