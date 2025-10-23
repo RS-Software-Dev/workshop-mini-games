@@ -5,7 +5,6 @@ function makeRect(x, y, w, h) {
 }
 
 
-
 // Sorgt dafür das der Wert `val` innerhalb von `min` und `max` bleibt.
 function clamp(val, min, max) {
     return Math.max(min, Math.min(val, max))
@@ -48,14 +47,6 @@ function checkBallCollisionSide(ball, rect) {
         case distRight:
             ball.x += distRight
             return DIR_RIGHT
-    }
-}
-
-function makeRandomBlock(row, col) {
-    return {
-        row,
-        col,
-        val: Math.floor(Math.random() * 4) + 1
     }
 }
 

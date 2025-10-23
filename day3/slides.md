@@ -42,7 +42,13 @@ layout: two-cols
 ---
 
 # Letztes Mal: Snake
-- Mehrere Arten von Änderung
+
+<v-clicks>
+
+- Zustand aus mehreren Teilen:
+  - Position der Frucht
+  - Richtung und Segmente der Schlange
+- Mehrere Arten von Änderung:
   - Zeitschritt
   - Bewegungsrichtung
   - Zurücksetzten
@@ -50,6 +56,8 @@ layout: two-cols
   - Multiplayer
   - Game Over beim Verlassen des Feldes
   - Gewinner wird angezeigt
+
+</v-clicks>
 
 ::right::
 
@@ -114,17 +122,17 @@ layout: two-cols
 new MiniGame({
   state: {
     ball: {
-        // ...
+        // Position, Größe, Richtung
     }
     blocks: [
-        // ...
+        // Position, Wert
     ]
     paddle: {
-        // ...
+        // Position, Richtung
     }
   },
   render: (state) => {
-    // ...
+    // Zeichnet die einzelnen Objekte
   },
   update: (state, { type, args }) => {
     switch (type) {
